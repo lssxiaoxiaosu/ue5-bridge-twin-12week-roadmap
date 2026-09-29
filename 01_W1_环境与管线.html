@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 1 周 · 环境与管线 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a class="cur" href="#">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 01 ／ 12</div>
+  <h1>环境与管线：把三条链路打通</h1>
+  <p class="goal"><b>本周目标</b>：打通「模型进 UE5 + 能打包 + 像素流基础设施就位」三条链路。<b>不写任何业务逻辑。</b></p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>35 : 65</b></span>
+    <span>对应合同条款 <b>第 5、7、8 条（首次加载 ≤30 s、BIM 加载、格式支持）</b></span>
+  </div>
+</div>
+
+<div class="note danger">
+  <span class="t">开始之前：两个必须纠正的既有认知</span>
+  <b>① 不要用 UE 5.3。</b>你机器上装的是 5.3.2（2023 年），当前官方最新为 5.8。
+  注意：官方<b>从未</b>明文声明「5.3 不支持 RTX 50 系」，别把这句话写进方案。真实情况是——RTX 50 系的核心坑在<b>驱动</b>：
+  576.xx 驱动会因引擎内置的 <code>RunHardwareBenchmark</code> 触发启动崩溃，<b>576.80 修复</b>。你的驱动是 <b>591.86，已达标，不需要动</b>。
+  升级引擎的真实理由是：5.3 捆绑的 DLSS/Streamline/CUDA 依赖早于 Blackwell、版本落后 5 个大版本、Epic 已公布 UE6 路线图。<br>
+  <b>② 本机没有 Autodesk Revit。</b>Datasmith Exporter 是 <b>Revit 插件</b>——即便你拿到 <code>.rvt</code> 也无法导出。
+  这一条是本周乃至整个项目的第一个硬障碍，D0 就要定方案。
+</div>
+
+<details class="acc" id="w1-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>优先级最高：先建立引擎与版本的正确认知</h4>
+
+    <div class="res">
+      <span class="title">虚幻引擎硬件与软件规格</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/hardware-and-software-specifications-for-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：查你的 RTX 5070 Laptop（12 GB 显存）在官方口径下是否达标，以及 Nanite / Lumen / 虚拟阴影贴图 / TSR 各自的硬件门槛。方案里若要写配置要求，以这页为准。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">虚幻引擎示例和教程（官方中文索引）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/samples-and-tutorials-for-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：它讲清了官方示例项目现在的获取路径——通过 <b>Fab</b>（网站 / 启动器 Fab 选项卡 / UE 的 Fab 插件），之后在「启动器 → 虚幻引擎 → 库 → Fab 库」中访问。避免你按旧教程去已经迁移的老市场里找东西。</div>
+    </div>
+
+    <h4>Datasmith：本周的技术核心</h4>
+
+    <div class="res">
+      <span class="title">在虚幻引擎中将 Datasmith 与 Revit 结合使用</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学（本周最重要）</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/using-datasmith-with-revit-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周看</b>：这是你整条模型管线的中文权威依据。必读要点：<br>
+        ① Revit 侧需<b>单独安装 Datasmith 导出器插件</b>，且<b>导出器版本必须与 UE 版本匹配</b>（不匹配会直接导入失败）；<br>
+        ② 必须先选中一个 <b>3D 视图</b>才能导出，该视图的可见性设置决定导出内容（可用剖面框 Section Box 只导局部——<b>本周练手就靠它</b>）；<br>
+        ③ Revit 元素实例属性会作为<b>元数据</b>挂到构件上，并写入 Component Tags（如 <code>Revit.Instance.Id</code>）；<br>
+        ④ Revit 的<b>类别会转成 UE 的 Layer</b>，可用于分层显隐；<br>
+        ⑤ 族参数与约束<b>不会</b>带进 UE（导入后是死几何）；<br>
+        ⑥ 曲面细分等级（Tessellation）默认 <b>Level 8</b>，是控制面片数的官方旋钮。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">从 Revit 导出 Datasmith 内容</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/exporting-datasmith-content-from-revit-to-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：D2/D3 导出环节的逐步操作依据。配合上一篇一起用：一篇讲原理与限制，一篇讲怎么导出。导出设置里记得勾选<b>需要带出的元数据类别</b>。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">关于 Datasmith 导出器的下载入口（重要提醒）</span>
+      <div class="meta"><span class="badge b-bad">已过时</span><span class="badge b-must">必看</span></div>
+      <div class="why">
+        文档正文里会指向 <code>unrealengine.com/datasmith/plugins</code> 这一下载页，但该域名当前对自动化访问返回 <b>403</b>，<b>本文档无法替你验证它是否仍可用</b>。
+        建议改为：<b>打开 Epic Games Launcher 或 Fab 搜索 “Datasmith Exporter” 安装</b>，或直接在浏览器里访问该域名确认。
+        <b>不要照抄任何旧博客里的直接下载链接</b>——插件必须与你的引擎版本严格对应。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">Datasmith 导入流程</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">选学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/datasmith-import-process-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：导入器各项选项的含义（几何、材质、光照、元数据分别怎么处理）。D2 导入时遇到选项不确定的地方查这里，不必通读。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">使用 Datasmith 元数据</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学（提前看）</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/using-datasmith-metadata-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周看</b>：这是「构件级拾取看属性」这条验收硬条款的技术基础，本周先知道结论、W2 再动手。<br>
+        关键结论（官方原文口径）：<code>Get Datasmith User Data Value for Key</code> 等节点属于 <b>Datasmith User Data</b> 类别，
+        「对性能影响极小，可随时使用，<b>即使在项目运行时</b>」，官方还给出了「运行时鼠标选中构件 → UMG 弹属性面板」的示例；<br>
+        而 <code>Get All Objects and Values for Key</code> / <code>Get All Datasmith User Data</code> 被限定在 <b>Editor Scripting</b> 类别，<b>不能用于运行时</b>。
+        另外元数据全部以<b>字符串</b>存储，取数字要自己转换。
+      </div>
+    </div>
+
+    <h4>像素流：本周只做「能启动」的验证</h4>
+
+    <div class="res">
+      <span class="title">PixelStreamingInfrastructure（官方仓库）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方仓库</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-must">必学</span></div>
+      <a href="https://github.com/EpicGamesExt/PixelStreamingInfrastructure">→ 打开仓库</a>
+      <div class="why">
+        <b>为什么这周看</b>：像素流的<b>前端与 Web 服务器已迁出引擎仓库</b>，改为这个独立仓库。任何还在教「直接跑引擎自带 SignallingServer / 老 run.bat」的中文教程，第 2 步就会卡住。<br>
+        <b>分支现状（实测）</b>：<code>UE5.8 = Current</code>、<code>UE5.7 = Supported</code>、<b><code>UE5.6 = EOL（已停止维护）</code></b>、<code>master = Dev</code>。
+        因此 <b>要用 5.8 就 clone <code>--branch UE5.8</code></b>；若改用 5.6，请知悉该分支已 EOL。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">像素流送入门（Getting Started）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文可访问</span><span class="badge b-opt">本周扫读，W9 精读</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/getting-started-with-pixel-streaming-in-unreal-engine">→ 打开</a>
+      <div class="why"><b>为什么这周看</b>：D5 只需要它前半段——插件在 <b>Graphics</b> 分类下（名称可能是 <b>Pixel Streaming</b> 或 <b>Pixel Streaming 2</b>）、端口 <b>80 与 8888</b>、启动参数 <code>-PixelStreamingURL=ws://127.0.0.1:8888</code>、成功标志是控制台出现 <code>Streamer connected</code>。其余留到 W9。</div>
+    </div>
+
+    <h4>零基础补课（只在卡住时看，不要提前刷）</h4>
+
+    <div class="res">
+      <span class="title">蓝图可视化脚本（总览）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">选学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/blueprints-visual-scripting-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：本周你只会在 D6 碰一点蓝图。这篇是「蓝图到底是什么」的中文总入口，10 分钟翻一遍建立印象即可，<b>不要本周深入</b>。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">蓝图快速入门指南</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">W2 用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/quick-start-guide-for-blueprints-visual-scripting-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么现在放这</b>：W2 的核心资料，本周先收藏。它是分步式入门，适合「先做后学」——做到哪一步卡住就翻对应小节。</div>
+    </div>
+
+    <h4>无法确认链接时，用搜索关键词自己筛</h4>
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词（本文档不给未经确认的视频链接）</span>
+      <code>UE5 Datasmith Revit 导入 教程</code>　<code>Datasmith 导出器 安装 版本匹配</code>　
+      <code>UE5 打包 Windows 失败 排查</code>　<code>UE5 曲面细分 Tessellation 面片</code>　<code>UE5 像素流 局域网 部署</code><br>
+      <b>筛视频时的三条硬标准</b>：① 引擎版本 ≥5.3；② 像素流类必须讲 <code>PixelStreamingInfrastructure</code> 新架构；③ Datasmith 类必须讲「导出器版本与引擎匹配」。
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D0–D6）</h2>
+
+<h3>D0（30–45 min，今天就能做）定版本 + 定 Revit 方案</h3>
+<p class="small muted">这一步不做，后面全是赌博。</p>
+<ol>
+  <li>打开 <b>Epic Games Launcher → 虚幻引擎 → 库 → 点 <code>+</code></b>，看能看到哪些版本：
+    <ul>
+      <li>有 <b>5.8</b> → 用 5.8（最新，对 RTX 50 系支持最完整）</li>
+      <li>最新只有 <b>5.6 / 5.6.1</b> → 用 5.6.1（Pixel Streaming 中文文档对应版本）</li>
+      <li><b>不要用 5.3</b></li>
+    </ul>
+    记下：<code>UE 5.____</code>
+  </li>
+  <li>确认显卡驱动：你已是 <b>591.86</b>（RTX 50 系在 UE 上的已知坑是 576.xx 驱动崩溃，576.80 已修复）→ <b>不需要动驱动</b>。</li>
+  <li>查清平南三桥 BIM 的三件事（问 BIM 提供方 / 项目负责人）：
+    <ul>
+      <li>格式：<code>.rvt</code> 原生文件，还是只有 <code>IFC</code>？</li>
+      <li>文件多大？</li>
+      <li><b>谁负责导出？</b>本机没有 Revit，三条路选一条：
+        <br><b>路 A（推荐）</b>：找一台装了 Revit 的机器装 Datasmith 导出器，导出后把产物拷给你
+        <br><b>路 B</b>：本机装 Revit（教育授权可申请；试用期仅 30 天，<b>不建议</b>在项目中途才开始用）
+        <br><b>路 C（兜底）</b>：只拿 IFC，走 IFC 导入流程（属性与几何质量通常不如 rvt 路线）
+      </li>
+    </ul>
+  </li>
+</ol>
+<ul class="check">
+  <li>写下了确定的 UE 版本号</li>
+  <li>写下了 BIM 格式与文件大小</li>
+  <li>写下了导出方案（A/B/C）与责任人姓名、约定交付日期</li>
+</ul>
+<div class="note info"><span class="t">卡住时查什么</span>
+  「SM_120 / Blackwell UE 崩溃」→ 关键词 <code>RTX 50 series UE crash 576.80</code>；版本差异 → 官方 Release Notes（URL 加 <code>?application_version=</code> 可切版本）</div>
+
+<h3>D1（2–3 h）装引擎 + 目录与规范落地</h3>
+<ol>
+  <li>装 UE（约 1–2 h 下载，后台跑）。安装路径<b>不要放 C 盘</b>；可选组件只勾 <b>Windows 目标平台</b>。</li>
+  <li>建目录骨架：
+<pre><code>D:\UE\
+├─ BridgeTwin\      ← UE 工程（纯 ASCII，绝不带中文/空格）
+├─ Model\           ← 原始 BIM 与导出产物（Revit / ifc / udatasmith）
+├─ PixelStreaming\  ← 像素流基础设施（git clone 目标）
+├─ Build\           ← 打包产物
+└─ Docs\            ← 文档与证据（验收要交）</code></pre>
+    <div class="note danger" style="margin-top:8px"><span class="t">为什么强调纯英文路径</span>
+      你现有工作区路径含中文（<code>DeepSeek Harness</code>、<code>01_xidagongqiao_demo</code>），UE 工程<b>绝不能</b>放那里，否则会出现难以定位的编译/打包失败。</div>
+  </li>
+  <li>配置 git 身份（当前未配置，不配后面提交会失败）：
+<pre><code>git config --global user.name  "你的名字"
+git config --global user.email "你的邮箱"</code></pre></li>
+  <li>在 <code>D:\UE\Docs\</code> 建 <code>devlog.md</code>，每天写 3 行：今天做了什么 / 卡在哪 / 明天第一件事。</li>
+</ol>
+<ul class="check">
+  <li>UE 装完，能从 Launcher 启动并新建工程</li>
+  <li><code>D:\UE\</code> 五个子目录已建齐</li>
+  <li><code>git config --global user.name</code> 能输出你的名字</li>
+</ul>
+
+<h3>D2（3–4 h）第一次 Datasmith 导入（<b>只导一小块，不要导全桥</b>）</h3>
+<p class="small muted">目的：把管线走通一次。全桥是 D4 的事。</p>
+<ol>
+  <li>拿到导出产物（按 D0 定的路 A/B/C）。路 A/B 请<b>先建一个只显示局部（例如单侧一段拱肋）的 3D 视图</b>再导出，用小模型练手。</li>
+  <li>新建工程：<code>Games → Blank</code>，命名 <code>BridgeTwin</code>，位置 <code>D:\UE\BridgeTwin</code>，不勾 Starter Content，C++ 选项选 <b>Blueprint</b>。</li>
+  <li>启用插件：<code>Edit → Plugins</code> → 搜 <code>Datasmith</code> → 启用 <b>Datasmith Importer</b> → 重启编辑器。</li>
+  <li>导入：工具栏 <b>Datasmith → Import</b>，导入选项先全默认。</li>
+  <li><b>读数据（本周最有价值的 30 分钟）</b>：World Outliner 看层级是否按 Revit 楼层/族组织；选中构件 → Details 面板找 <b>Datasmith User Data</b>，看能否看到编号、族、类型、材质。把<b>所有可用的 key 名抄下来</b>——W2 的分类全靠它。</li>
+  <li>量两个数（写进 devlog）：控制台（<code>`</code> 键）输入 <code>stat fps</code> 与 <code>stat rhi</code>，记录<b>面片数与 fps</b>；记录<b>导入耗时</b>。</li>
+</ol>
+<ul class="check">
+  <li>模型出现在关卡里，能自由查看</li>
+  <li>选中构件能看到 Datasmith 元数据</li>
+  <li>记录：面片数 = ______，fps = ______，导入耗时 = ______</li>
+  <li>Output Log 零红色报错</li>
+</ul>
+<div class="note info"><span class="t">卡住时查什么</span>
+  「Datasmith 菜单找不到」→ 插件没启用或没重启　｜　「一片黑/没材质」→ 查 <code>RevitMaster</code> 材质　｜
+  「缺构件」→ 回 Revit 检查那个 3D 视图的可见性与剖面框　｜　「IFC 丢属性」→ <code>Datasmith IFC importer metadata</code></div>
+
+<h3>D3（3–4 h）把导入这件事「做熟」：定工艺参数</h3>
+<ol>
+  <li><b>搞懂曲面细分等级（Tessellation）</b>：在 Revit 的 Datasmith 导出设置里（默认 Level 8）。导出两版对比：<b>Level 8</b> 与 <b>Level 3–4</b>，分别导入比较面片数与外观差异。<br>
+    结论写进 devlog：<b>可接受的最低细分等级 = ___，对应面片数 = ___</b></li>
+  <li><b>搞懂构件分类靠什么字段</b>：看命名规律（Revit 族名/类型名会带进命名）与元数据。目标是把构件归到 8 类：主拱肋（两侧各 22 节段含合龙段）/ 32 对吊杆 / 横联钢管 / 腹杆 / 桥面系钢格子梁 / 两端塔架 / 缆索 / 基础。<b>先别写蓝图</b>，先用眼睛确认靠什么能区分。</li>
+  <li><b>学会打包</b>（今天至少试一次，哪怕空关卡）：<code>Platforms → Windows → Package Project</code>，输出到 <code>D:\UE\Build\</code>，完成后<b>双击 exe 能独立运行</b>。<br>
+    ⚠️ 第一次打包会编译着色器，<b>可能 30–60 min</b>，后台跑着，你继续做别的。</li>
+</ol>
+<ul class="check">
+  <li>拿到「细分等级 ↔ 面片数」对照表（≥2 组数据）</li>
+  <li>能说出 8 类构件各自的识别字段</li>
+  <li>打包产物能独立运行</li>
+</ul>
+
+<h3>D4（4–5 h）全桥导入 + 面片预算（本周核心）</h3>
+<ol>
+  <li>全桥导出与导入（用 D3 定的细分等级）。建议先做一次<b>中等规模</b>测试（整片拱肋 + 桥面系），再上全桥。</li>
+  <li><b>面片预算核算</b>（合同硬指标：<b>面片 ≤200 万时帧率 ≥30 fps</b>）。用 <code>stat fps</code> / <code>stat rhi</code> 记录。若远超 200 万，按以下顺序压：
+    <ol>
+      <li>降 Tessellation 等级（<b>第一手段</b>）</li>
+      <li>开启 <b>Nanite</b>（模型右键 → Nanite → Enable）。注意：Nanite 不支持 Instanced Static Mesh，且会增加显存占用</li>
+      <li>UE 的 <b>Proxy Geometry</b> 工具减面（官方推荐用于 Datasmith 的三角化结果）</li>
+    </ol>
+  </li>
+  <li>建立「精度档位」概念（精细 / 标准 / 流畅）：先用<b>关卡可见性与图层</b>实现三档显隐，不写复杂逻辑。</li>
+  <li><b>第一次性能基线测量</b>（要留证据，第三方测试报告会要）：截图 <code>stat fps</code> + <code>stat rhi</code>，存到 <code>D:\UE\Docs\evidence\W01\</code>。</li>
+</ol>
+<ul class="check">
+  <li>全桥在 UE 里可自由查看</li>
+  <li>有「面片数 ↔ fps」实测数据，且<b>知道怎么压到 200 万以内</b></li>
+  <li><code>Docs\evidence\W01\</code> 里有性能截图</li>
+</ul>
+<div class="note info"><span class="t">卡住时查什么</span>
+  「帧率个位数」→ <code>stat gpu</code> 找最贵的那一项（通常是 Lumen / 虚拟阴影 / TSR）　｜　「开 Nanite 反而慢」→ 看是否 GPU 受限、显存是否吃满　｜
+  「导入卡死」→ 缩小范围分批导入</div>
+
+<h3>D5（2–3 h）像素流基础设施就位（<b>只验证「能启动」</b>）</h3>
+<div class="note warn"><span class="t">先记住一个已核实的限制</span>
+  PS2 里「<b>一个 UE 实例 = 一份渲染 = 所有浏览器同一视角</b>」。所以 2–4 人同时看是天然支持的；但「每人独立漫游」需要一实例一流。
+  <b>今天的任务不涉及这个决定。</b></div>
+<ol>
+  <li>克隆像素流基础设施（Node 与 npm 你机器上已具备）：
+<pre><code>cd D:\UE\PixelStreaming
+git clone --branch UE5.8 https://github.com/EpicGamesExt/PixelStreamingInfrastructure.git</code></pre>
+    分支号要与你选的引擎版本对应。实测分支现状：<code>UE5.8 = Current</code>、<code>UE5.7 = Supported</code>、<b><code>UE5.6 = EOL</code></b>、<code>master = Dev</code>。不确定就先 <code>git branch -r</code> 看有哪些分支。
+  </li>
+  <li>安装并启动信令服务器：
+<pre><code>cd D:\UE\PixelStreaming\PixelStreamingInfrastructure\SignallingWebServer\platform_scripts\cmd
+.\setup.bat          # 装依赖，可能几分钟
+.\start.bat          # 启动</code></pre>
+    默认端口：<b>streamer 8888 / player 80 / sfu 8889</b>。
+  </li>
+  <li>引擎侧连一次：UE 工程启用 <b>Pixel Streaming</b> 插件 → 重启 → <b>Standalone Game</b> 启动（Editor Preferences → Level Editor → Play → Additional Launch Parameters 填 <code>-PixelStreamingURL=ws://127.0.0.1:8888</code>）。信令服务器出现 <code>Streamer connected</code> ＝ 成功。</li>
+  <li>浏览器接入：打开 <code>http://127.0.0.1</code>，点页面 → 点播放，能看到引擎画面 ＝ <b>本周最大风险项解除</b>。</li>
+</ol>
+<ul class="check">
+  <li><code>start.bat</code> 能启动，日志显示 8888 / 80 监听</li>
+  <li>信令服务器出现 <code>Streamer connected</code></li>
+  <li>浏览器能看到 UE 画面并操作</li>
+</ul>
+<div class="note info"><span class="t">卡住时查什么</span>
+  「80 端口被占用」→ 关掉其他 Web 服务，或改 <code>config.json</code> 的 <code>player_port</code>　｜　
+  「setup.bat 报错缺编译工具」→ 装 <b>Visual Studio Build Tools（C++ 桌面开发）</b>，这是唯一可能需要 VS 的场景　｜　
+  「连上但黑屏」→ 关键词 <code>Pixel Streaming black screen firewall</code>、确认走 GPU 编码　｜　
+  「别的电脑看不到」→ <b>Windows 防火墙放行 80/8888</b>，用局域网 IP 而非 127.0.0.1</div>
+
+<h3>D6（3–4 h）收尾 + 定向补课 + 下周排程</h3>
+<ol>
+  <li>补做本周没做完的（大概率是打包或全桥导入）。</li>
+  <li><b>定向补三个知识点</b>（先做后学，现在才查效率最高）：蓝图基础（变量 / 事件 / BeginPlay / 函数，<b>只查这三个</b>）、Actor 与 Component 的关系（为什么拾取要拿 Component）、UMG 是什么（Widget 怎么创建与显示）。</li>
+  <li><b>整理本周证据包</b>（第三方测试报告要用，现在开始攒）：<code>Docs\evidence\W01\</code> 放性能截图、导入耗时记录、面片数对照表、像素流成功截图（含 <code>Streamer connected</code> 与浏览器画面）。</li>
+  <li>把待确认事项正式发出并留存记录：<b>① 像素流并发口径 ② 第三方测试报告范围 ③ 几何一致性口径 ④ BIM 源文件与 Revit 主机</b>。</li>
+  <li><b>写下止损规则</b>（贴在 devlog 首页）：
+    <ul>
+      <li>单个报错 <b>≤90 min</b>，超时换路（换方案 / 简化 / 问人 / 带报错问 AI）</li>
+      <li>单个技术点 <b>≤半天</b>，超时标记「降级方案」继续往前</li>
+      <li>每周日检查点必须全过，不过就<b>砍功能，不砍进度</b></li>
+    </ul>
+  </li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>UE 版本确定</td><td>5.8 或 5.6.1，已安装可启动</td><td>—</td></tr>
+    <tr><td>BIM 导入链路</td><td>全桥已导入，零报错，构件带 Revit 元数据</td><td>第 7、8 条</td></tr>
+    <tr><td>面片预算能力</td><td>有「细分等级 ↔ 面片数 ↔ fps」实测数据，知道怎么压到 200 万内</td><td><b>第 5 条</b></td></tr>
+    <tr><td>打包链路</td><td>能打出可独立运行的 exe</td><td><b>第 5 条</b></td></tr>
+    <tr><td>像素流链路</td><td>信令服务器启动，浏览器能看到 UE 画面</td><td>平台形态基础</td></tr>
+    <tr><td>证据包</td><td><code>Docs\evidence\W01\</code> 归档齐</td><td>全部</td></tr>
+  </tbody>
+</table>
+
+<div class="note danger">
+  <span class="t">本周绝对不要做的事</span>
+  不要学 Niagara / Chaos 物理 / 动画蓝图 / 地形 / 材质艺术　｜　不要装 Visual Studio 写 C++（纯蓝图路线，除非 D5 的 setup.bat 报错）　｜
+  不要买任何 Fab 插件（MQTT 与 JSON 都是引擎自带的）　｜　不要在 UE 5.3 上调试任何渲染问题　｜　
+  不要把工程放在含中文的路径下　｜　不要试图本周就挂 130 个测点（那是 W3–W7 的事）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> 检查点全过 → <a href="02_W2_构件分类与属性.html">进入第 2 周：构件分类与属性</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
