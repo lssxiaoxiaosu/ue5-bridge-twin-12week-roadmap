@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 8 周 · 回放与推演 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a class="cur" href="#">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 08 ／ 12</div>
+  <h1>回放与推演：历史数据重演 + 吊装过程演示</h1>
+  <p class="goal"><b>本周目标</b>：历史回放（任意时段）驱动三维着色；用 Sequencer 做「看着像」的斜拉扣挂吊装推演；补齐全部导出能力（Excel/CSV/PNG/PDF）。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>40 : 60</b></span>
+    <span>对应条款 <b>第 15 条（回放与导出）+ 方案增强项</b></span>
+    <span>里程碑 <b>数据联动闭环（收尾）</b></span>
+  </div>
+</div>
+
+<div class="note info">
+  <span class="t">先把「必须做的」和「加分项」分清</span>
+  <table style="margin-top:8px">
+    <thead><tr><th>内容</th><th>性质</th><th>本周优先级</th></tr></thead>
+    <tbody>
+      <tr><td>历史回放（任意时段）驱动三维着色</td><td><b>合同第 15 条，必须做</b></td><td><b>最高</b></td></tr>
+      <tr><td>数据导出 Excel/CSV、图表导出 PNG/PDF</td><td><b>合同第 15 条，必须做</b></td><td><b>最高</b></td></tr>
+      <tr><td>吊装推演（44 节段斜拉扣挂）</td><td><b>方案增强项，不在 27 条内</b></td><td>次高（时间不够可降级）</td></tr>
+    </tbody>
+  </table>
+  <b>排程原则</b>：先保两个「必须做」，再做推演。推演做不完不构成拒收理由。
+</div>
+
+<details class="acc" id="w8-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>Sequencer：本周唯一的新技术</h4>
+
+    <div class="res">
+      <span class="title">在虚幻引擎中通过蓝图播放过场动画 ★ 本周首推</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文（全中文可照抄）</span><span class="badge b-must">必学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/play-cinematics-from-blueprints-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周看它</b>：这是你这一周<b>最该用的一篇</b>——全中文、纯蓝图、18 个编号步骤可以照抄，而且它恰好覆盖了你要的全部要点：<br>
+        ① 添加关卡序列（Add Level Sequence）、给灯光强度打关键帧、添加相机并打关键帧；<br>
+        ② 在<b>关卡蓝图</b>里：<code>Create Reference to Level Sequence</code> → <b>Play（Sequence Player）</b>；<br>
+        ③ <b>最容易踩的坑</b>：<code>Set Playback Position</code> 要设为 <b>0</b>，否则序列只播一次、二次触发无效；<br>
+        ④ <code>When Finished</code> 设为 <b><code>Keep State</code></b>：让序列改动的结果在播完后保留（例如「剖切动画播完保持剖开状态」）；<br>
+        ⑤ <code>Go to End and Stop</code>：做「跳过动画但保留结果」。<br>
+        <b>⚠️ 需要注意的迁移工作</b>：教程绑的是<b>触发器重叠</b>事件，你要换成 <b>UMG 按钮点击</b>或<b>构件点选</b>触发，逻辑结构不变。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">Sequencer 影片工具总览（概念与界面）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/unreal-engine-sequencer-movie-tool-overview">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：做推演动画前先搞清 Sequencer 的界面与基本概念（轨道、关键帧、播放范围、子序列）。做完第一个动画后再回看效果最好。<b>注意</b>：这页讲的是「Sequencer 是什么」，蓝图调用播放不在这一页（在上一条那篇里）。</div>
+    </div>
+
+    <div class="res warnres">
+      <span class="title">关于「Sequencer 蓝图播放 API 页」的说明</span>
+      <div class="meta"><span class="badge b-warn">存在资料空白</span></div>
+      <div class="why">
+        Sequencer 的<b>总览 slug（<code>sequencer-in-unreal-engine</code>）实测返回 200 但正文为空壳</b>，属无效页；
+        而「蓝图调用播放」的 API 细节<b>没有独立官方页</b>。<br>
+        <b>结论</b>：本周以「通过蓝图播放过场动画」那篇为准即可——它已经把 <code>Sequence Player</code> 的常用节点讲全了。
+        确实需要更多节点时，在蓝图里搜 <code>Sequence</code> 看实际有哪些，比找文档快。
+      </div>
+    </div>
+
+    <h4>导出能力（合同第 15 条）</h4>
+
+    <div class="res">
+      <span class="title">ECharts 导出：PNG 用 getDataURL，PDF 走浏览器打印</span>
+      <div class="meta"><span class="badge b-official">ECharts 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://echarts.apache.org/handbook/zh/get-started/">→ 使用手册（中文）</a>
+      <div class="why">
+        <b>为什么这周看</b>：合同第 15 条要求「监测数据导出 <b>Excel/CSV</b>，图表导出 <b>PNG/PDF</b>」。做法建议：<br>
+        ① CSV：前端拼字符串 + <code>Blob</code> 下载，最简单可靠；<br>
+        ② Excel：用 <code>SheetJS</code>（xlsx 库，纯前端）比后端生成更快；<br>
+        ③ PNG：ECharts 的 <code>getDataURL()</code> 直接拿；<br>
+        ④ PDF：A4 打印样式 + <code>window.print()</code> 最省事（网页本身的打印样式你在 CSS 里已经具备），或用前端 PDF 库。<br>
+        <b>提醒</b>：导出功能很容易被忽略，但它是<b>必查项</b>——验收时会现场点，务必四个格式都实测一遍。
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>UE5 Sequencer 入门 教程</code>　<code>UE5 关卡序列 蓝图 播放</code>　<code>UE5 Sequence Player Set Playback Position</code>　
+      <code>UE5 过场动画 制作 中文</code>　<code>UE5 关键帧 动画 入门</code>　<code>ECharts 导出 Excel</code>　<code>SheetJS 前端 导出 xlsx</code>
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（3–4 h）历史回放：数据侧（Web）</h3>
+<ol>
+  <li><b>回放的数据接口</b>：给定「测点 + 时间范围」→ 返回按时间排序的序列。要点：
+    <ul>
+      <li><b>降采样</b>：1 年数据不可能一次返回。按时间跨度自动选粒度（1 h 用原始点、7 d 用分钟均值、1 月用小时均值）</li>
+      <li>支持<b>多测点同时回放</b>（演示时通常要整个分区一起动）</li>
+    </ul>
+  </li>
+  <li><b>回放控制条</b>：播放/暂停/进度拖动/倍速（1×、2×、4×、8×）/跳转指定时间。</li>
+  <li><b>回放时曲线要跟着走</b>（播放头位置指示），而不是整条曲线都在。</li>
+</ol>
+<ul class="check">
+  <li>能选任意时段并回放（含 1 h / 24 h / 7 d 至少三档）</li>
+  <li>有进度条、暂停、倍速</li>
+  <li>大数据量下不卡</li>
+</ul>
+
+<h3>D2（4 h）历史回放驱动三维着色（合同第 15 + 6 条）</h3>
+<ol>
+  <li><b>回放数据流</b>：Web 按回放进度批量推送数据帧到 MQTT（不要一条条发，按帧打包，例如每 200 ms 一帧包含该时刻所有测点值）。</li>
+  <li><b>UE5 侧</b>：订阅回放主题 → 解析帧 → 更新构件着色。<b>与实时模式共用同一套着色逻辑</b>（只是数据源不同）——这是设计上的关键，不要写两套。</li>
+  <li><b>模式切换</b>：界面上明确「实时 / 回放」状态，切回实时要能立刻恢复。</li>
+  <li><b>演示脚本</b>：设计一段 2 分钟的回放演示（例如加载试验全过程），录成视频。</li>
+</ol>
+<ul class="check">
+  <li>回放能驱动三维构件颜色变化</li>
+  <li>实时/回放可切换，切换不出错</li>
+  <li>有 2 分钟演示视频</li>
+</ul>
+
+<h3>D3（3 h）导出四项全通（合同第 15 条）</h3>
+<ol>
+  <li><b>监测数据导出 Excel</b>：选测点 + 时段 → 出 <code>.xlsx</code>，含列头、时间列、数值列、单位。</li>
+  <li><b>导出 CSV</b>：同上，适合大数据量。</li>
+  <li><b>图表导出 PNG</b>：ECharts <code>getDataURL()</code>，注意背景色（不然导出是透明的，投影会难看）。</li>
+  <li><b>图表导出 PDF</b>：用打印样式 + <code>window.print()</code>，或前端 PDF 库。<b>验证打印分页是否正常。</b></li>
+  <li><b>把四个导出文件都存一份作为证据</b>：<code>Docs\evidence\27条验收\C15_导出_*.{xlsx,csv,png,pdf}</code>。</li>
+</ol>
+<ul class="check">
+  <li>四种导出格式各成功一次且有文件留证</li>
+  <li>导出的 Excel 能被 Excel/WPS 正常打开，无乱码</li>
+  <li>PNG 背景正常、PDF 分页正常</li>
+</ul>
+
+<h3>D4（4 h）吊装推演：Sequencer 动画（增强项）</h3>
+<div class="note warn"><span class="t">先明确验收口径</span>
+  你已确认推演只需「<b>看着像的过程回放</b>」，不需要真实的索力-位移耦合物理仿真。<b>这是明智的降级</b>——
+  真做物理耦合，单人 90 天不可能完成。</div>
+<ol>
+  <li><b>场景准备</b>：确认孪生场景里有吊装推演所需的元素（两端塔架、缆索、节段）。若无分节段几何，用<b>简化块体</b>代表 44 个节段（外观像即可）。</li>
+  <li><b>建关卡序列</b>：
+    <ul>
+      <li>节段吊装：从地面升到设计位置（位置关键帧 + 缓入缓出）</li>
+      <li>两岸对称悬臂拼装：左侧节段 → 右侧节段 → 交替推进（<b>对称</b>是桥梁施工的关键特征，演示时要体现出来）</li>
+      <li>拱顶合龙段：最后一段合龙（可加高亮强调）</li>
+      <li>相机：几个预设机位切换（俯瞰 → 侧面 → 拱顶特写）</li>
+    </ul>
+  </li>
+  <li><b>联动数值展示</b>：在动画过程中显示「塔顶位移 / 扣索索力 / 节段标高」的数值变化（可用 UMG 数字滚动，或用已有的测点数据）。
+    <b>不要求数值物理正确，但要有来源说明</b>（例如「示意值」）。
+  </li>
+  <li><b>蓝图控制</b>：按 D1 资料区的要点接好（注意 <code>Set Playback Position = 0</code> 与 <code>Keep State</code> 两个坑）。</li>
+  <li><b>导出视频</b>：用 Sequencer 的渲染影片功能或录屏，存一段 60–90 秒的推演视频。</li>
+</ol>
+<ul class="check">
+  <li>推演动画可播放、可重播（第二次仍能播）</li>
+  <li>体现两岸对称拼装与拱顶合龙</li>
+  <li>数值面板随动画变化</li>
+  <li>有 60–90 秒视频</li>
+</ul>
+
+<h3>D5（3 h）性能复核 + 稳定性</h3>
+<ol>
+  <li><b>回放时的性能</b>：回放比实时更密集（批量推送），用 <code>stat unit</code> 与 <code>stat gpu</code> 确认帧率仍在达标范围。</li>
+  <li><b>长时间运行测试</b>：让系统连续跑 <b>2 小时</b>（含实时数据 + 反复回放），观察是否有内存增长、连接掉线、帧率衰减。
+    <ul>
+      <li>显存泄漏要特别留意（有社区报告提到 Nanite + 光追下显存持续增长；你不用光追可规避，但仍要盯）</li>
+    </ul>
+  </li>
+  <li>记录测试结果与发现的问题。</li>
+</ol>
+<ul class="check">
+  <li>回放时性能达标</li>
+  <li>2 小时连续运行无崩溃、无显著内存增长</li>
+  <li>有问题清单与处理结论</li>
+</ul>
+
+<h3>D6（3 h）第 2 次全表普查 + 砍补决策（关键节点）</h3>
+<div class="note danger"><span class="t">今天必须做出取舍决策</span>
+  只剩 4 周。<b>今天要把「哪些条款确定能过、哪些有风险、哪些要降级」写清楚，并同步给项目负责人。</b>
+  提前沟通是项目管理，拖到验收是事故。</div>
+<ol>
+  <li>逐条过 27 条，形成四类清单：<b>已达标 / 本周可补 / 有风险 / 需降级</b>。</li>
+  <li>本周结束时，未动的条款应该只剩 <b>第 9、10 条（轻量化）、第 22–27 条（系统设置/RBAC/日志）</b>，以及 W9–W10 的像素流相关能力。</li>
+  <li><b>针对「有风险」条款做出决策</b>：
+    <ul>
+      <li>第 9、10 条（轻量化压缩率 ≥70%、解析 ≤60 s）——这条依赖模型管线，若 rvt 路线难压缩，需评估 IFC 路线或第三方轻量化工具</li>
+      <li>像素流并发——若甲方要求独立视角，需立即启动多实例方案评估</li>
+    </ul>
+  </li>
+  <li>把决策清单发出去并留存记录。</li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>历史回放</td><td>任意时段 + 驱动三维着色 + 可切实时</td><td><b>第 15 条（必查）</b></td></tr>
+    <tr><td>四项导出</td><td>Excel / CSV / PNG / PDF 各留一份文件</td><td><b>第 15 条（必查）</b></td></tr>
+    <tr><td>吊装推演</td><td>可播放、体现对称拼装与合龙、有视频</td><td>方案增强项（可降级）</td></tr>
+    <tr><td>长稳测试</td><td>2 小时连续运行无崩溃</td><td>验收稳定性</td></tr>
+    <tr><td>砍补决策清单</td><td>四类分档，已同步负责人</td><td>项目管理</td></tr>
+  </tbody>
+</table>
+
+<div class="note good">
+  <span class="t">里程碑判定（第 2 个月结束）</span>
+  真数据驱动 ✅　≥30 测点绑定 ✅　延迟 ≤2 s ✅　告警闭环 ✅　看板 7 类 ✅　回放与导出 ✅　推演 ✅
+  ＝ <b>「数据联动闭环」里程碑达成，第二阶段结束。剩余工作全部集中在「像素流平台化 + 系统设置 + 验收资料」。</b>
+</div>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① <b>推演是增强项</b>：时间不够时，把 44 节段简化为 8–12 个代表性节段，只要「过程看着像」即可　
+  ② 导出功能是必查项，<b>宁可推迟推演也要保导出</b>　
+  ③ 2 小时长稳测试若发现内存持续增长，先记录现象与复现步骤，<b>不要本周深挖</b>（W11 专项）　
+  ④ 不要本周碰像素流（W9–W10 的事）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="09_W9_像素流贯通.html">进入第 9 周：像素流贯通</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
