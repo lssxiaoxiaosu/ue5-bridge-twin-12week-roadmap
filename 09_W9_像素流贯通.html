@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 9 周 · 像素流贯通 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a class="cur" href="#">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 09 ／ 12</div>
+  <h1>像素流贯通：让浏览器打开就是三维场景</h1>
+  <p class="goal"><b>本周目标</b>：UE5 打包为独立程序；把 PixelStreamingInfrastructure 的<b>信令服务器</b>跑起来；<b>两台设备</b>的浏览器同时看到三维画面并能操作。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>45 : 55</b></span>
+    <span>对应条款 <b>第 1、5、7 条（平台形态、性能）</b></span>
+    <span>关键前置 <b>W1 的 D5 若已跑通，本周会轻松很多</b></span>
+  </div>
+</div>
+
+<div class="note warn">
+  <span class="t">本周最大的坑：网上多数中文像素流教程已经作废</span>
+  像素流的<b>前端与 Web 服务器已迁出引擎仓库</b>，改为独立仓库 <b>PixelStreamingInfrastructure</b>，插件名也出现了 <b>Pixel Streaming 2</b>。
+  任何还在教「直接跑引擎自带 SignallingServer / 老 <code>run.bat</code>」的教程，<b>第 2 步就会卡住</b>。
+  本周只以官方文档 + 那一个独立仓库为准。
+</div>
+
+<div class="note danger">
+  <span class="t">开工前必须确认的一件事（它决定本周工作量）</span>
+  <b>2–4 人同时看，是「同一视角 + 主持人控制」还是「各自独立漫游」？</b><br>
+  已核实：官方 PS2 是「<b>一个 UE 实例 = 一份渲染 = 所有浏览器同一视角</b>」，输入默认共享，官方把这个模式定位为「同一会话、不同控制权限」——<b>即主持人操作、其他人观看</b>。
+  若要求每人<b>独立视角</b>，则必须「一实例一流」（每实例带 <code>-PixelStreamingID</code>，前端按 streamerId 分配），
+  而<b>旧 matchmaker 已于 5.5 弃用</b>，需自建分配服务；且 12 GB 显存跑 2 个实例已属风险区。<br>
+  <b>这一条没确认，本周可能从「两天」变成「两周」。</b>建议按「同一视角 + 主持人控制」推进，并把这个口径写进方案请甲方确认。
+</div>
+
+<details class="acc" id="w9-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>像素流：本周全部依赖这几份</h4>
+
+    <div class="res">
+      <span class="title">Getting Started with Pixel Streaming ★ 本周首推</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文可访问</span><span class="badge b-must">必学（逐字对照做）</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/getting-started-with-pixel-streaming-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周逐字读</b>：这是当前最准确的部署步骤，关键事实已为你核实出来：<br>
+        ① 插件在 <b>Graphics</b> 分类下，名称可能是 <b>Pixel Streaming</b> 或 <b>Pixel Streaming 2</b>；<br>
+        ② 端口：<b>80 和 8888</b> 需要放行；<b>先关掉本机其他 Web 服务器</b>；<br>
+        ③ 局域网先用 <code>localhost</code> / <code>127.0.0.1</code>；<b>跨网段或公网需要配 STUN/TURN</b>（<code>peerConnectionOptions</code>）；<br>
+        ④ 编辑器内启动参数：<code>-PixelStreamingURL=ws://127.0.0.1:8888</code>；打包后每个 exe 启动都要带同样参数（做快捷方式）；<br>
+        ⑤ <b>流程已变更</b>：前端与 Web 服务器改为独立仓库 PixelStreamingInfrastructure。三种获取方式：直接 clone、<code>git clone --branch UEX.Y</code>、或到引擎目录 <code>\Engine\Plugins\Media\PixelStreaming\Resources\WebServers</code> 跑 <code>get_ps_servers</code> 脚本；<br>
+        ⑥ 服务器启动：<code>SignallingWebServer\platform_scripts\cmd\setup.bat</code> → 启动脚本；成功标志是控制台出现 <b><code>Streamer connected</code></b>；<br>
+        ⑦ 建议加 <code>-RenderOffScreen</code>：避免窗口被最小化导致输入流中断（<b>生产部署建议加</b>）。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">PixelStreamingInfrastructure（官方仓库）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方仓库</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-must">必学</span></div>
+      <a href="https://github.com/EpicGamesExt/PixelStreamingInfrastructure">→ 打开仓库</a>
+      <div class="why">
+        <b>分支选择（实测，直接影响你会不会装到停止维护的代码上）</b>：
+        <table style="margin-top:8px">
+          <thead><tr><th>分支</th><th>状态</th><th>建议</th></tr></thead>
+          <tbody>
+            <tr><td><code>UE5.8</code></td><td><b>Current</b></td><td><b>用 5.8 就选它</b></td></tr>
+            <tr><td><code>UE5.7</code></td><td>Supported</td><td>次选</td></tr>
+            <tr><td><code>UE5.6</code></td><td><b>EOL（已停止维护）</b></td><td>仅在必须用 5.6 时使用，并知悉已 EOL</td></tr>
+            <tr><td><code>master</code></td><td>Dev（开发分支）</td><td><b>不要用于交付</b></td></tr>
+          </tbody>
+        </table>
+        仓库内可用文档：<code>Docs/README.md</code>、<code>Docs/pixel-streaming-2-migration-guide.md</code>（<b>PS2 迁移指南，值得一读</b>）、
+        <code>Frontend/README.md</code>、<code>SignallingWebServer/README.md</code>、<code>SFU/README.md</code>。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">像素流送总览（中文入口，用来把术语对上号）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">先读它建立框架</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/pixel-streaming-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么先读这篇再看英文步骤</b>：它是中文总入口（含入门/指南/参考/基础硬件/示例内容分区），
+        可帮你把 Getting Started 里的英文术语与本地的中文叫法对应起来，降低阅读成本。<br>
+        <b>⚠️ 已实测的一个小毛病</b>：该页正文中的「入门 / 指南 / 参考」小节<b>链接列表是空的</b>，要从左侧导航点进去，别以为是页面坏了。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">像素流参考（Reference）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">当作字典</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/unreal-engine-pixel-streaming-reference">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周常备</b>：所有启动参数、配置项、编码选项都在这里（分辨率、码率、编码器选择、端口修改等）。遇到「怎么改 xxx」的问题，第一个来这页查，不要先搜中文博客。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">像素流基础设施说明页</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-opt">选学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/pixel-streaming-infrastructure">→ 打开</a>
+      <div class="why"><b>为什么这周看</b>：讲清了前端 / 信令服务器 / SFU 的架构关系。当你要定制播放器页面（W10）时，先理解这几块的分工会省很多时间。</div>
+    </div>
+
+    <h4>性能与编码（本周必须确认的一件事）</h4>
+
+    <div class="res">
+      <span class="title">Stat 命令与性能复核（确认是 GPU 编码）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">复用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/stat-commands-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周再看</b>：开启像素流后，<b>视频编码会额外占用 GPU</b>。你必须在开流状态下重新测帧率——
+        很可能「单独跑 UE5 有 35 fps，开流后掉到 26 fps」。<br>
+        <b>已核实的相关事实</b>：官方称消费级 N 卡的硬件编码器通常<b>上限约 8 个会话</b>，第 9 路起自动切软件编码；
+        默认的 <code>-PixelStreamingUseMediaCapture</code> 在某些平台上会多耗约 10% CPU。
+        <b>你的场景是单实例一流，风险不大</b>，但「开流后是否仍 ≥30 fps」必须实测。
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>UE5 像素流 局域网 部署</code>　<code>Pixel Streaming Infrastructure 教程</code>　<code>像素流送 打包 Web 端</code>　
+      <code>UE5.6 像素流 邪修</code>　<code>UE5 像素流 黑屏 排查</code>　<code>PixelStreaming 端口 8888 占用</code><br>
+      <b>筛视频的硬标准</b>：<b>必须</b>讲 <code>PixelStreamingInfrastructure</code> 新架构。若视频里出现「引擎自带的 SignallingServer 目录」「老 run.bat」「matchmaker」——
+      说明它讲的是旧流程，<b>直接跳过</b>。
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（3–4 h）打包独立程序 + 基本验证</h3>
+<ol>
+  <li><b>整理打包配置</b>：
+    <ul>
+      <li>设置默认地图（打包后一启动就是主场景）</li>
+      <li>确认 <b>Pixel Streaming 插件</b>已启用</li>
+      <li>检查打包设置：Shipping / Development、包含哪些关卡与资源</li>
+    </ul>
+  </li>
+  <li><b>打包到 <code>D:\UE\Build\</code></b>，双击 exe 确认：
+    <ul>
+      <li>能独立运行（不依赖编辑器）</li>
+      <li>模型加载正常、帧率达标、交互正常</li>
+    </ul>
+  </li>
+  <li><b>做启动快捷方式</b>，Target 追加：<code>-PixelStreamingURL=ws://127.0.0.1:8888 -RenderOffScreen</code>。
+    <div class="note info" style="margin:8px 0"><span class="t">为什么现在就带参数做快捷方式</span>
+      打包后的 exe <b>每次启动都要带参数</b>。做个快捷方式（或 .bat）能避免每次手打，也方便 W11 的一键启动脚本。</div>
+  </li>
+</ol>
+<ul class="check">
+  <li>打包产物能独立运行，性能与编辑器内接近</li>
+  <li>快捷方式带参数可用</li>
+</ul>
+
+<h3>D2（3–4 h）信令服务器：完整走一遍</h3>
+<ol>
+  <li><b>克隆正确分支</b>（W1 若已做过，这里核对分支是否与引擎版本匹配）：
+<pre><code>cd D:\UE\PixelStreaming
+git clone --branch UE5.8 https://github.com/EpicGamesExt/PixelStreamingInfrastructure.git
+git branch -r          # 核对可用分支：UE5.8=Current / UE5.7=Supported / UE5.6=EOL / master=Dev</code></pre></li>
+  <li><b>安装依赖并启动</b>：
+<pre><code>cd PixelStreamingInfrastructure\SignallingWebServer\platform_scripts\cmd
+.\setup.bat
+.\start.bat</code></pre>
+    默认端口：<b>streamer 8888 / player 80 / sfu 8889</b>。若 80 被占用，改配置里的 <code>player_port</code>。
+  </li>
+  <li><b>启动打包程序</b>，观察信令服务器控制台是否出现 <b><code>Streamer connected</code></b>。</li>
+  <li><b>本机浏览器</b>打开 <code>http://127.0.0.1</code> → 点页面 → 点播放 → 看到画面。</li>
+  <li><b>读一遍 <code>Docs/pixel-streaming-2-migration-guide.md</code></b>，了解 PS2 与旧版差异（避免后面踩老坑）。</li>
+</ol>
+<ul class="check">
+  <li>信令服务器正常启动，端口监听正常</li>
+  <li>出现 <code>Streamer connected</code></li>
+  <li>本机浏览器能看到并操作画面</li>
+</ul>
+
+<h3>D3（3–4 h）局域网多设备接入（2–4 人同时看）</h3>
+<ol>
+  <li><b>查本机局域网 IP</b>（<code>ipconfig</code>），例如 <code>192.168.x.x</code>。</li>
+  <li><b>放行防火墙</b>：Windows 防火墙对 <b>80 与 8888</b> 入站放行（这一步不做，别的设备一定连不上）。</li>
+  <li><b>第二台设备</b>（另一台电脑/平板）浏览器访问 <code>http://192.168.x.x</code> → 应能看到同一画面。</li>
+  <li><b>验证多人同时</b>：同时开 2–4 个浏览器（不同设备或同机多窗口），确认：
+    <ul>
+      <li>都能看到画面</li>
+      <li>帧率与延迟可接受</li>
+      <li><b>注意官方行为</b>：所有连接默认<b>共享控制权</b>——如果多人同时拖鼠标会互相打架。这正是「主持人控制」的问题所在</li>
+    </ul>
+  </li>
+  <li><b>若需要限制控制权</b>：在播放器页面侧配置输入策略（W10 会做正式版，今天先确认问题存在）。</li>
+</ol>
+<ul class="check">
+  <li>第二台设备能访问</li>
+  <li>同时 2–4 个客户端可看</li>
+  <li>已知悉「控制权共享」的行为并记录</li>
+</ul>
+
+<h3>D4（3–4 h）开流后的性能与画质调优</h3>
+<ol>
+  <li><b>重测帧率</b>：在开流状态下用 <code>stat fps</code> / <code>stat unit</code> / <code>stat gpu</code> 测——<b>这是验收口径</b>（因为验收就是通过浏览器看的）。</li>
+  <li><b>编码参数调优</b>（查 Reference 页）：
+    <ul>
+      <li>分辨率：1080p 通常够用；投影演示可试 720p 换流畅度</li>
+      <li>码率：局域网可以高一些，画质更好</li>
+      <li>确认走的是 <b>GPU 硬件编码</b>而非 CPU 软编（软编会显著增加 CPU 与延迟）</li>
+    </ul>
+  </li>
+  <li><b>延迟测量</b>：从「本机操作」到「浏览器画面响应」的主观延迟，用录屏对比帧（同时录桌面与浏览器）估算。记录数值。</li>
+  <li><b>若性能不达标</b>：按 W4 的顺序压画质（Lumen 已关 → 降 ScreenPercentage → 减可见构件）。</li>
+</ol>
+<ul class="check">
+  <li>开流状态下帧率有实测数据</li>
+  <li>确认是 GPU 编码</li>
+  <li>延迟有估算数值（记录方法）</li>
+</ul>
+
+<h3>D5（3 h）稳定性与故障处理</h3>
+<ol>
+  <li><b>断线重连测试</b>：关掉 UE5 程序再启动 → 浏览器刷新后能否恢复；关掉信令服务器再启动 → 引擎能否重连。</li>
+  <li><b>多客户端掉线测试</b>：关掉其中一个客户端，其他客户端是否受影响。</li>
+  <li><b>写一份《像素流故障速查表》</b>（验收现场会用）：
+    <table>
+      <thead><tr><th>现象</th><th>排查顺序</th></tr></thead>
+      <tbody>
+        <tr><td>浏览器打不开页面</td><td>信令服务器是否在跑 → 80 端口是否被占 → 防火墙</td></tr>
+        <tr><td>页面能开但黑屏</td><td>是否 <code>Streamer connected</code> → 编码器是否可用 → 显卡驱动</td></tr>
+        <tr><td>别的电脑连不上</td><td>IP 是否写对 → 防火墙放行 → 是否同一网段</td></tr>
+        <tr><td>卡顿</td><td><code>stat gpu</code> → 码率太高 → 分辨率太高 → 网络</td></tr>
+        <tr><td>画面糊</td><td>码率 → 分辨率 → 编码器设置</td></tr>
+      </tbody>
+    </table>
+  </li>
+  <li><b>准备演示应急预案</b>：若像素流当天失败，<b>直接双击打包 exe 现场演示</b>（这是你架构上的天然退路，一定要提前演练一次）。</li>
+</ol>
+<ul class="check">
+  <li>断线重连可用</li>
+  <li>故障速查表已成文</li>
+  <li>应急预案（exe 演示）演练过一次</li>
+</ul>
+
+<h3>D6（3 h）收尾 + 证据 + 下周排程</h3>
+<ol>
+  <li>整理证据：两台设备同时观看的录屏、开流后帧率截图、延迟估算记录 → <code>Docs\evidence\W09\</code>。</li>
+  <li>更新验收自测表：像素流相关能力可勾选；<b>第 5 条</b>补「开流状态下」的性能证据。</li>
+  <li>准备 W10 的前置：确认要给播放器页面加哪些控制（隐藏默认 UI、限制输入、与 Web 后台通信）。</li>
+  <li>写 devlog。</li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>独立运行程序</td><td>打包 exe 可离线运行，性能接近编辑器</td><td>第 1、5 条</td></tr>
+    <tr><td>信令服务器</td><td>可启动、可重启、出现 Streamer connected</td><td>平台形态</td></tr>
+    <tr><td>多设备接入</td><td><b>2–4 人浏览器同时观看</b></td><td><b>使用形态</b></td></tr>
+    <tr><td>开流性能</td><td>开流状态下仍有实测帧率数据</td><td><b>第 5 条</b></td></tr>
+    <tr><td>故障速查表 + 应急预案</td><td>成文且演练过</td><td>验收保障</td></tr>
+  </tbody>
+</table>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① 若 <code>setup.bat</code> 报错缺编译工具，<b>装 Visual Studio Build Tools（C++ 桌面开发）</b>——这是全项目唯一可能需要 VS 的地方　
+  ② 若甲方要求「独立视角」，<b>不要本周硬攻多实例</b>：先按单实例交付，同时把多实例方案与显存风险写成文档上报，W11 再评估　
+  ③ 像素流若整体卡住超过 2 天，<b>先确认 exe 现场演示能跑</b>（保底），再继续攻　
+  ④ 不要本周做 Web 后台嵌入（W10 的事）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="10_W10_Web 融合.html">进入第 10 周：Web 融合</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
