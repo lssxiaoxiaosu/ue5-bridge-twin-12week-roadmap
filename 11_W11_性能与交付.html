@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 11 周 · 性能与交付 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a class="cur" href="#">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 11 ／ 12</div>
+  <h1>性能与交付：把系统变成「能连续演示 30 分钟不崩」的样子</h1>
+  <p class="goal"><b>本周目标</b>：性能按 33.3 ms 预算逐项压实；补齐合同第 22–27 条的系统设置（菜单/组织/RBAC/用户/日志）；做一键启动脚本与三类交付文档。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>25 : 75</b></span>
+    <span>对应条款 <b>第 9、10、22–27 条</b>（▲22 为硬指标）</span>
+    <span>本周性质 <b>几乎全是实做，学习量最小</b></span>
+  </div>
+</div>
+
+<div class="note info">
+  <span class="t">本周的原则：不再学新东西</span>
+  你已经有全部所需技术。本周是三件事：<b>① 把性能压到达标；② 把后台的系统设置补齐；③ 把交付物做出来。</b>
+  如果本周你还在学新工具或新框架，说明前面哪一周的任务漏了——回去补，不要在这里开新战场。
+</div>
+
+<details class="acc" id="w11-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>性能：三份官方文档，按顺序用</h4>
+
+    <div class="res">
+      <span class="title">Stat 命令（先测再调，不要凭感觉优化）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/stat-commands-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>本周用法</b>：<b>33.3 ms 是 30 fps 的总预算</b>，先看 <code>stat unit</code> 四项数值（Frame / Game / Draw / GPU）判断瓶颈在哪一项，再对症下药：
+        <table style="margin-top:8px">
+          <thead><tr><th>瓶颈项</th><th>典型原因（你的场景）</th><th>处理</th></tr></thead>
+          <tbody>
+            <tr><td><b>Game</b> 高</td><td>Tick 里做全量遍历、每帧拾取、着色逻辑太重</td><td>改定时器、加节流、只更新变化项</td></tr>
+            <tr><td><b>Draw</b> 高</td><td>构件数太多、绘制调用过多</td><td><code>stat initviews</code> 看 Processed Primitives；合并/剔除</td></tr>
+            <tr><td><b>GPU</b> 高</td><td>Lumen、虚拟阴影、TSR、像素流编码</td><td>关 Lumen、降 ScreenPercentage、压阴影</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">可视性与遮挡剔除（Draw 线程的救命页）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/visibility-and-occlusion-culling-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>本周用法</b>：桥梁构件被桥面遮挡的部分不该被渲染。用 <code>r.VisualizeOccludedPrimitives 1</code> 看哪些本该被剔除、
+        <code>stat initviews</code> 看剔除效率、<code>FreezeRendering</code> 冻住画面后自由走动检查遮挡关系。<br>
+        <b>官方明确指出的关键点</b>：<b>「可见静态网格体元素」是对渲染线程影响最大的因素</b>——对你有 5000+ 构件的场景，这是最该优化的方向。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">Lumen 性能指南 + TSR + VSM（三个画质换帧率的旋钮）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">按需查</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/lumen-performance-guide-for-unreal-engine">→ Lumen 性能指南</a>　
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/temporal-super-resolution-in-unreal-engine">→ TSR</a>　
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/virtual-shadow-maps-in-unreal-engine">→ VSM</a>
+      <div class="why">
+        <b>本周用法</b>：这三个是 GPU 侧最有效的降本手段，<b>但要注意它们的观感代价</b>：
+        <ul>
+          <li><b>Lumen 关闭</b>（你的既定策略）→ 用烘焙静态光照 + SSAO/DFAO 替代。桥梁是静态结构，观感损失很小</li>
+          <li><b>TSR + <code>r.ScreenPercentage</code> 60–70</b> → 最划算的一档；再低会出现明显模糊，投影演示时会被看出来</li>
+          <li><b>VSM</b> → 你的构件是静态的，VSM 可以留；但若场景里有移动光源，缓存失效会很贵，检查一遍</li>
+        </ul>
+        <b>做「演示档」和「验收档」两套设置</b>：验收档保证面片 ≤200 万时 ≥30 fps；演示档在投影时可以再降一档求流畅。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">流调优指南（像素流侧的最后一档）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文可访问</span><span class="badge b-must">本周精读</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/stream-tuning-guide">→ 打开（中文）</a>
+      <div class="why"><b>本周用法</b>：W10 你只做了「能用」。本周按这页调画质与延迟的平衡：码率、分辨率、编码器预设。<b>验收是看浏览器画面的，所以流的质量就是用户看到的画质。</b></div>
+    </div>
+
+    <h4>系统设置（合同第 22–27 条，Web 侧）</h4>
+
+    <div class="res">
+      <span class="title">直接用你现有原型已有的能力（不要重写）</span>
+      <div class="meta"><span class="badge b-must">必读</span><span class="badge b-tool">本地文件</span></div>
+      <div class="why">
+        <b>为什么这周重点看</b>：你现有原型的 README 已写明它实现了「<b>RBAC 角色—用户—资源三级授权、组织机构树、用户管理、日志审计（保留 ≥6 个月）</b>」——<br>
+        这正是合同 <b>▲22、23、24、25、26、27</b> 条的核心内容。<b>本周的任务是逐条核对是否真的满足合同措辞，而不是重新开发。</b>
+        <table style="margin-top:8px">
+          <thead><tr><th>条款</th><th>要求</th><th>你要核对的点</th></tr></thead>
+          <tbody>
+            <tr><td>▲22</td><td>菜单设置、组织管理、权限设置、用户管理、系统日志</td><td>五个模块是否都有入口且可用</td></tr>
+            <tr><td>23</td><td>支持自定义菜单与页面</td><td>能不能真的新增一个菜单项并指向一个页面</td></tr>
+            <tr><td>24</td><td>组织机构树管理</td><td>树能否增删改</td></tr>
+            <tr><td>25</td><td>RBAC 三级授权 + <b>按组织、按测点范围的数据权限</b></td><td><b>用两个账号对比演示</b>——只看「有权限菜单」不算达标，要看到「数据范围被限制」</td></tr>
+            <tr><td>26</td><td>用户增删改查、启用禁用、<b>密码复杂度与有效期</b></td><td>策略是否真的可配置且生效</td></tr>
+            <tr><td>27</td><td>登录/操作/告警日志可查询导出，<b>保留 ≥6 个月</b></td><td>三类日志是否分开；导出是否可用；保留策略是否写明</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>RBAC 三级授权 设计</code>　<code>数据权限 按组织 过滤 实现</code>　<code>操作日志 审计 表设计</code>　
+      <code>日志保留 策略 定期归档</code>　<code>密码复杂度 有效期 实现</code>　<code>Windows 服务 开机自启 脚本</code>
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（4 h）性能专项：按 33.3 ms 预算逐项压实</h3>
+<div class="note danger"><span class="t">本周最关键的一天</span>
+  合同第 5 条是硬指标，且 W4 测的是「单独跑 UE5」，现在必须测「<b>开流 + 数据联动 + 回放</b>」的复合状态——
+  这才是验收现场的真实负载。</div>
+<ol>
+  <li><b>建立基准</b>：在最终形态下（像素流开启 + 实时数据 + 看板联动）测一轮，记录 Frame / Game / Draw / GPU 四项数值。</li>
+  <li><b>按瓶颈逐项处理</b>（照 D1 资料的表格对症下药）。<b>每次只改一项，改完复测</b>，否则你不知道是哪项生效了。</li>
+  <li><b>重点处理 Game 线程</b>（这是最容易被忽略的）：
+    <ul>
+      <li>把所有 <code>Tick</code> 里的周期逻辑改为<b>定时器</b>（按刷新周期跑，而不是每帧）</li>
+      <li>着色更新<b>只处理值变化的构件</b></li>
+      <li>MID <b>缓存复用</b>，不要重复 Create</li>
+      <li>拾取保持节流（W2 已做）</li>
+    </ul>
+  </li>
+  <li><b>做两套画质档</b>：验收档（保证达标）与演示档（投影用）。<b>一键切换。</b></li>
+  <li><b>出最终性能证据</b>：
+    <ul>
+      <li>截图：<code>stat fps</code> + <code>stat rhi</code>（含面片数）+ <code>stat unit</code>（四项时间）</li>
+      <li>录屏：<b>旋转 / 缩放 / 平移</b>三种操作各 10 秒（合同明确写的是这三种操作下的帧率）</li>
+      <li>开流状态下的浏览器录屏（证明验收口径下达标）</li>
+    </ul>
+    存入 <code>Docs\evidence\27条验收\C05_性能_*.{png,mp4}</code>
+  </li>
+</ol>
+<ul class="check">
+  <li>知道瓶颈在哪一项并已针对性优化</li>
+  <li>有两套画质档可一键切换</li>
+  <li><b>面片 ≤200 万时 ≥30 fps（开流状态下，有截图与三种操作的录屏）</b></li>
+  <li>首次加载 ≤30 s 复测达标</li>
+</ul>
+
+<h3>D2（3–4 h）系统设置：逐条核对第 22–27 条</h3>
+<ol>
+  <li>按 D1 资料的表格<b>逐条核对</b>，把不满足的点列出来（大概率是这些）：
+    <ul>
+      <li><b>按组织/按测点范围的数据权限</b>（第 25 条后半句最容易漏）——需要真的做数据过滤</li>
+      <li><b>密码复杂度与有效期</b>（第 26 条）——策略要可配且生效</li>
+      <li><b>日志保留 ≥6 个月</b>（第 27 条）——要有明确的保留策略与归档机制，不能只是「有日志表」</li>
+      <li><b>自定义菜单与页面</b>（第 23 条）——要能演示「新增一个菜单项」</li>
+    </ul>
+  </li>
+  <li><b>补齐这些缺口</b>。数据权限建议实现方式：用户 → 角色 → 组织/测点范围 → 查询时自动加过滤条件。</li>
+  <li><b>准备两个演示账号</b>（如「管理员」与「某分区观察员」），用于验收时<b>现场对比数据范围</b>——这比讲十句设计都有效。</li>
+</ol>
+<ul class="check">
+  <li>22–27 条逐条核对完成，缺口已补</li>
+  <li>有两个账号可现场对比数据权限</li>
+  <li>日志能查询并导出</li>
+</ul>
+
+<h3>D3（3–4 h）第 9、10 条：BIM 轻量化证明（本周最可能翻车的一条）</h3>
+<div class="note warn"><span class="t">这两条一直被推到本周，现在必须处理</span>
+  合同第 9 条：原始模型 ≥200 MB 时，轻量化后 ≤原始 30%（压缩率 ≥70%），保留属性 ≥10 项。
+  第 10 条：≤300 MB 模型轻量化解析 ≤60 s，轻量化场景加载 ≤30 s。<br>
+  <b>难点在于「轻量化产物」的定义</b>——用 Datasmith + Nanite 路线时，什么算「轻量化后的数据量」？</div>
+<ol>
+  <li><b>先明确定义并写进方案</b>。可选口径：
+    <ul>
+      <li>口径 A：打包后资产体积（<code>.pak</code> / Content 大小）÷ 原始模型文件体积</li>
+      <li>口径 B：导入后工程内该资产的字节数 ÷ 原始体积</li>
+      <li>口径 C：轻量化处理工具的输出文件体积 ÷ 输入文件体积</li>
+    </ul>
+    <b>建议用口径 A 或 B</b>（可现场用文件管理器复核，最没有争议），并在方案里写明计算方式。
+  </li>
+  <li><b>实测并留证</b>：
+    <ul>
+      <li>原始模型体积（字节）</li>
+      <li>轻量化后体积（字节）</li>
+      <li>压缩率 = 1 − 后/前</li>
+      <li>解析耗时（秒）与场景加载耗时（秒）</li>
+    </ul>
+    做成《轻量化体积对比表》，存 <code>Docs\evidence\27条验收\C09-C10_轻量化_体积对比表.xlsx</code>
+  </li>
+  <li><b>若压缩率达不到 70%</b>，可选手段：
+    <ul>
+      <li>降低 Tessellation 等级（W1 已验证有效）</li>
+      <li>用 Proxy Geometry 减面（官方推荐用于 Datasmith 结果）</li>
+      <li>剔除不可见构件（内部结构、重复几何）</li>
+      <li>评估 IFC 路线是否体积更小</li>
+      <li><b>若确实做不到</b>：如实记录并<b>立即上报</b>，讨论是否调整口径或采用第三方轻量化工具——这是需要提前沟通的事，不能拖到验收
+      </li>
+    </ul>
+  </li>
+  <li><b>属性保留 ≥10 项</b>：核对构件属性面板能读出的字段数（编号、名称、类别、材质、规格、节段序号、面片数、坐标、族名、类型名……），确保 ≥10 项且可查询。</li>
+</ol>
+<ul class="check">
+  <li>轻量化口径已定义并写入方案</li>
+  <li>体积对比表已出（含压缩率与耗时）</li>
+  <li>属性保留 ≥10 项且可查询</li>
+  <li>若不达标，已上报并形成处置方案</li>
+</ul>
+
+<h3>D4（3–4 h）一键启动脚本（现场演示的保命符）</h3>
+<div class="note danger"><span class="t">为什么必须有这个</span>
+  你的全套系统要同时跑：MQTT Broker + 时序库 + 数据服务 + Web 后台 + 信令服务器 + UE5 程序。
+  <b>验收现场你要在 2 分钟内让它们全部起来，而不是逐个双击、逐个排错。</b></div>
+<ol>
+  <li><b>写一个启动脚本</b>（.bat 或 .ps1），按顺序启动并做健康检查：
+    <ol>
+      <li>启动 Broker → 检查端口 1883</li>
+      <li>启动数据库 → 检查端口</li>
+      <li>启动数据服务 → 检查 HTTP 健康接口</li>
+      <li>启动 Web 后台 → 检查端口</li>
+      <li>启动信令服务器 → 检查 8888 / 80</li>
+      <li>启动 UE5 打包程序（带 <code>-PixelStreamingURL</code> 参数）</li>
+      <li>最后打印一行「全部就绪，请打开 http://... 」</li>
+    </ol>
+  </li>
+  <li><b>写一个停止脚本</b>（同样重要——演示完要能干净退出，避免端口占用影响下次）。</li>
+  <li><b>做开机自启</b>（可选但推荐）：把服务注册为 Windows 服务或用启动文件夹，避免现场忘记启动某项。</li>
+  <li><b>演练 3 次</b>：每次从「全部关闭」状态冷启动到「可演示」，记录耗时。<b>目标 ≤2 分钟。</b>
+</ol>
+<ul class="check">
+  <li>一键启动 / 停止脚本可用</li>
+  <li>冷启动到可演示 ≤2 分钟（实测 3 次）</li>
+  <li>脚本包含健康检查与就绪提示</li>
+</ul>
+
+<h3>D5（4 h）三类交付文档</h3>
+<div class="note info"><span class="t">你已确认的交付物</span>
+  操作手册 / 部署文档 / 测试用例 / 验收资料。<b>这些不是「最后补的」，而是合同要求「提供全部产品及完整的技术资料」。</b></div>
+<ol>
+  <li><b>《操作手册》</b>——面向使用者（教师/学生）：
+    <ul>
+      <li>如何打开平台、如何看三维、如何点测点、如何切图层/视角、如何做剖切与测量</li>
+      <li>如何看告警、如何定位、如何回放</li>
+      <li>常见问题（连不上、画面黑、卡顿）</li>
+      <li><b>配截图</b>——没有截图的手册在验收时说服力很弱</li>
+    </ul>
+  </li>
+  <li><b>《部署文档》</b>——面向运维（3 年质保期内可能换人维护）：
+    <ul>
+      <li>服务器配置要求、软件清单与版本（引擎版本、Node 版本、数据库版本、EMQX 版本）</li>
+      <li>安装步骤：数据库 → Broker → 数据服务 → Web → 信令服务器 → UE5 程序</li>
+      <li>配置项说明（端口、主题、连接串、阈值表位置）</li>
+      <li>备份与恢复流程（数据库备份、模型与工程备份）</li>
+      <li><b>故障排查章节</b>——直接复用 W9 的《像素流故障速查表》</li>
+    </ul>
+  </li>
+  <li><b>《测试用例》</b>——面向第三方测试机构：
+    <ul>
+      <li><b>按 27 条逐条编制</b>：条款号 → 测试目的 → 前置条件 → 操作步骤 → 预期结果 → 证据形式</li>
+      <li>性能类指标要写清测试方法（分辨率、画质档、测量工具、采样次数）</li>
+      <li>把 W7 的《全链路验证用例》并入</li>
+    </ul>
+  </li>
+  <li><b>《验收资料》</b>：27 条对照表 + 证据索引（按条款号）＋ 第三方报告（若已取得）。</li>
+</ol>
+<ul class="check">
+  <li>操作手册（含截图）完成</li>
+  <li>部署文档完成（含故障排查）</li>
+  <li>测试用例覆盖 27 条</li>
+  <li>验收资料索引完成</li>
+</ul>
+
+<h3>D6（3 h）第 3 次全表普查 + 收官准备</h3>
+<ol>
+  <li><b>逐条过 27 条</b>，<b>每一条都必须能指出一个证据文件</b>。找不出证据的条款就是风险条款。</li>
+  <li><b>把所有证据按条款号归档</b>到 <code>Docs\evidence\27条验收\</code>，命名 <code>C{条款号}_{类别}_{说明}.{ext}</code>。</li>
+  <li><b>给风险条款定处置方案</b>：
+    <ul>
+      <li>能从技术上补的 → 排进 W12</li>
+      <li>补不了的 → <b>提前向项目负责人书面报备</b>，说明原因与替代方案</li>
+    </ul>
+  </li>
+  <li><b>准备 W12 的验收演练脚本</b>：按什么顺序演示哪些功能，谁操作、谁讲解，遇到问题怎么应对。</li>
+</ol>
+<ul class="check">
+  <li>27 条每条都有证据文件或已定处置方案</li>
+  <li>证据包结构规范、命名统一</li>
+  <li>验收演练脚本初稿完成</li>
+</ul>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>性能达标</td><td>开流状态下面片 ≤200 万时 ≥30 fps；首次加载 ≤30 s</td><td><b>第 5 条（硬指标）</b></td></tr>
+    <tr><td>两套画质档</td><td>验收档 + 演示档，一键切换</td><td>第 5 条</td></tr>
+    <tr><td>系统设置</td><td>▲22–27 全部可演示（含数据权限双账号对比）</td><td><b>▲22、23–27</b></td></tr>
+    <tr><td>轻量化证明</td><td>体积对比表（压缩率、耗时）+ 属性 ≥10 项</td><td><b>第 9、10 条</b></td></tr>
+    <tr><td>一键启动</td><td>冷启动 ≤2 分钟，含健康检查</td><td>验收保障</td></tr>
+    <tr><td>三类文档</td><td>操作手册 / 部署文档 / 测试用例</td><td>商务要求（技术资料）</td></tr>
+  </tbody>
+</table>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① 性能若达不到，<b>优先砍画质档位而不是砍功能</b>；同时准备「演示档」保现场观感　
+  ② 轻量化压缩率若达不到 70%，<b>当天上报，不要自己憋着</b>——这是需要甲方知情的口径问题　
+  ③ 文档不要追求完美排版，<b>有内容 + 有截图 > 美观但空洞</b>　
+  ④ 不要本周开新技术栈
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="12_W12_验收准备.html">进入第 12 周：验收准备</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
