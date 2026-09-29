@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 7 周 · 联动闭环 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a class="cur" href="#">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 07 ／ 12</div>
+  <h1>联动闭环：看板、对比分析与全链路验证</h1>
+  <p class="goal"><b>本周目标</b>：把合同第 11–14 条的看板做全（≥7 类指标、理论/实测同轴对比、三项误差统计），并完成一次<b>全链路闭环验证</b>——从真实传感器到浏览器看板与三维着色同时正确。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>30 : 70</b></span>
+    <span>对应条款 <b>第 11、12、13、14 条</b></span>
+    <span>里程碑 <b>数据联动闭环</b></span>
+  </div>
+</div>
+
+<div class="note good">
+  <span class="t">本周是本项目「看起来成了」的一周</span>
+  前面六周你都在打地基。本周结束时，<b>屏幕上会同时出现：三维构件随真实数据变色 + 浏览器里曲线在动 + 告警在跳</b>。
+  这就是验收现场最主要的画面。<b>把这一周的成果录成一段 5 分钟的视频</b>，它会是后续所有汇报的基础素材。
+</div>
+
+<details class="acc" id="w7-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>看板与图表（Web 侧主线）</h4>
+
+    <div class="res">
+      <span class="title">ECharts 官方中文手册（双轴对比、误差、导出）</span>
+      <div class="meta"><span class="badge b-official">ECharts 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://echarts.apache.org/handbook/zh/get-started/">→ 使用手册（中文）</a>　
+      <a href="https://echarts.apache.org/zh/tutorial.html">→ 教程总入口</a>
+      <div class="why">
+        <b>为什么这周是它</b>：合同第 14 条要求「理论值与实测值<b>同轴</b>对比曲线」——同轴意味着两条曲线共用一套坐标轴（<b>不要用双 Y 轴糊弄</b>，
+        验收会看出来），这在 ECharts 里就是同一个 <code>series</code> 数组里放两条线。三项误差统计（绝对误差/相对误差/相关系数）用 <code>markPoint</code>、
+        <code>tooltip</code> 或表格展示；导出 PNG 用 <code>getDataURL</code>，导出 PDF 走浏览器打印或前端 PDF 库。<br>
+        <b>实操建议</b>：把配置项手册当字典用，需要什么图先搜示例库（官方 gallery），改参数比从零写快得多。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">你现有原型的看板实现（直接读代码最快）</span>
+      <div class="meta"><span class="badge b-must">必读</span><span class="badge b-tool">本地文件</span></div>
+      <div class="why">
+        <b>为什么这周重点读</b>：你的原型 README 已写明它实现了「7 类指标：应变、激光位移、倾角、振动加速度、索力、温湿度、风速风向」
+        「理论值/实测值同轴对比」「绝对误差、相对误差、相关系数三项统计」——<b>合同第 11–14 条要求的，你原型的看板层基本都有了</b>。<br>
+        <b>本周的正确做法</b>：不是重写看板，而是<b>把它的数据源从仿真切到真实接口</b>，然后逐条对照合同核对是否真的达标
+        （例如「刷新周期可配 1–60 s、默认 ≤5 s」这一条要真的做成可配置）。<br>
+        <b>重点看 <code>js/charts.js</code></b>——图表层单独成文件，改造成本最低。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">Three.js 官方中文手册（若你决定保留 Web 三维）</span>
+      <div class="meta"><span class="badge b-official">Three.js 官方</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-opt">选学</span></div>
+      <a href="https://threejs.org/docs/index.html#manual/zh/introduction/Creating-a-scene">→ 打开（中文手册）</a>
+      <div class="why">
+        <b>为什么放这</b>：按本路线架构，Web 侧不承担三维主渲染（那是 UE5 的活），所以 Three.js 本周基本用不上。<br>
+        <b>但有一个例外很重要</b>：如果甲方要求「多人各自独立漫游」，而像素流单实例不支持独立视角时，
+        <b>备选方案就是让 Web 端的 Three.js 承担多人自由查看，UE5 只做大屏投影</b>。届时这页就是你的退路。<br>
+        <b>顺带提醒</b>：不要被文档里的 <code>ClippingGroup</code>（剖切）、<code>OutlineEffect</code>（描边）、<code>Raycaster</code>（拾取）迷惑——
+        这些是 <b>Web 端</b>的能力，UE 端要用 UE 的做法重做一遍，两边不能混用。
+      </div>
+    </div>
+
+    <h4>UE5 侧：本周只做打磨</h4>
+
+    <div class="res">
+      <span class="title">Stat 命令（全链路性能复核）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">复用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/stat-commands-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么再用一次</b>：数据联动加上去之后，性能会变差（每轮要更新几十上百个构件）。用 <code>stat unit</code> 确认 Game 线程没被蓝图拖垮，用 <code>stat gpu</code> 确认着色开销可控。<b>这是周内的例行检查，不是新知识。</b></div>
+    </div>
+
+    <div class="res">
+      <span class="title">Actor 通信（复用于看板 ↔ 三维联动）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">选学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/actor-communication-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：第 13 条要求「实时数值面板、实时/历史曲线、<b>三维模型着色联动</b>、统计报表」四种展示形式同步。
+        Web 端与 UE5 端通过 MQTT 主题互发消息（W3 已把主题结构定好），UE5 内部则需要把「收到指令」分发到相机、材质、UI 三个地方——这就是 Actor 通信的典型场景。</div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>ECharts 同轴 多曲线 对比</code>　<code>ECharts 导出图片 getDataURL</code>　<code>ECharts 大数据量 性能优化 large</code>　
+      <code>绝对误差 相对误差 相关系数 计算</code>　<code>UE5 蓝图 解析 JSON 数组</code>　<code>MQTT 消息 批量 高频 优化</code>
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（3–4 h）看板 ≥7 类指标全部打通</h3>
+<ol>
+  <li>对照合同第 12 条的 <b>7 类指标</b>逐个核对：应变、激光位移、倾角、振动加速度、索力、温湿度、风速风向。
+    <table>
+      <thead><tr><th>#</th><th>指标</th><th>数据源是否已接</th><th>图表是否已有</th><th>是否真实数据</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>应变</td><td></td><td></td><td></td></tr>
+        <tr><td>2</td><td>激光位移</td><td></td><td></td><td></td></tr>
+        <tr><td>3</td><td>倾角</td><td></td><td></td><td></td></tr>
+        <tr><td>4</td><td>振动加速度</td><td></td><td></td><td></td></tr>
+        <tr><td>5</td><td>索力</td><td></td><td></td><td></td></tr>
+        <tr><td>6</td><td>温湿度</td><td></td><td></td><td></td></tr>
+        <tr><td>7</td><td>风速风向</td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <b>注意</b>：合同第 3 项的设备里有温湿度传感器与超声波风速仪，所以这 7 类<b>都有真实设备来源</b>；若某类设备还没通电，先用仿真顶上但<b>要有明确标记</b>。
+  </li>
+  <li>每类指标至少要有：实时数值卡片 + 实时曲线 + 历史曲线入口。</li>
+  <li><b>刷新周期做成可配</b>（1–60 s），默认 ≤5 s，并在界面上显示当前周期（合同第 13 条）。</li>
+</ol>
+<ul class="check">
+  <li>7 类指标全部有数据、有图</li>
+  <li>刷新周期可配且默认 ≤5 s，界面可见</li>
+  <li>每类都有实时数值 + 实时曲线</li>
+</ul>
+
+<h3>D2（3–4 h）理论值 vs 实测值对比 + 三项误差统计</h3>
+<ol>
+  <li><b>理论值从哪来？</b>这是本条的关键前提，必须先想清楚：
+    <ul>
+      <li>方案 A：有限元计算/设计值（由第 1、3 项的相关方提供）</li>
+      <li>方案 B：设计公式估算（如索力理论值、挠度理论值）</li>
+      <li>方案 C：试验工况的理论预期值（加载配重与预期应变/位移）</li>
+    </ul>
+    <b>无论用哪种，都要在文档里写明来源与假设</b>——验收时甲方一定会问「你的理论值怎么来的」。
+  </li>
+  <li><b>做同轴对比曲线</b>：理论值与实测值画在<b>同一套坐标轴</b>上（不要双 Y 轴）。</li>
+  <li><b>做三项误差统计</b>：
+    <ul>
+      <li><b>绝对误差</b> = |实测 − 理论|</li>
+      <li><b>相对误差</b> = |实测 − 理论| / |理论| × 100%</li>
+      <li><b>相关系数</b> = 两组序列的皮尔逊相关系数</li>
+    </ul>
+    每项都要显示数值，并说明统计区间（哪个时间段、多少个样本）。
+  </li>
+</ol>
+<ul class="check">
+  <li>理论值来源已明确并成文</li>
+  <li>同轴对比曲线可交互</li>
+  <li>三项误差统计有数值、有区间说明</li>
+</ul>
+
+<h3>D3（3–4 h）四种展示形式同步（合同第 13 条）</h3>
+<ol>
+  <li><b>实时数值面板</b>：关键指标的当前值、单位、状态色。</li>
+  <li><b>实时/历史曲线</b>：切换时间范围（1 h / 24 h / 7 d 等）。</li>
+  <li><b>三维模型着色联动</b>：<b>这是本周的技术重点</b>——
+    <ul>
+      <li>Web 看板选中一个测点 → 通过 MQTT 主题发指令 → UE5 高亮对应构件并显示其值</li>
+      <li>UE5 里点选构件 → 回推给 Web → 看板切换到该测点的曲线</li>
+      <li><b>双向都要通</b>，否则演示时不顺手</li>
+    </ul>
+  </li>
+  <li><b>统计报表</b>：把 W6 的报表面板挂进看板入口。</li>
+</ol>
+<ul class="check">
+  <li>四种展示形式在同一个界面里协同工作</li>
+  <li>Web ↔ UE5 双向联动可用（各录一段）</li>
+</ul>
+
+<h3>D4（4 h）全链路闭环验证（里程碑判定）</h3>
+<div class="note danger"><span class="t">这是本周最重要的半天，必须一次做完并录屏</span>
+  全链路 = <b>真实传感器 → 采集箱 → Broker → 库 → Web 看板 + UE5 三维</b>，中间不能有任何一段是手工造的假数据。</div>
+<ol>
+  <li><b>设计一个可复现的验证流程</b>（写下来，作为第三方测试用例的雏形）：
+    <ol>
+      <li>记录起始时间</li>
+      <li>对某个测点施加一个可观测的变化（加载配重、或让设备产生明显变化）</li>
+      <li>观察：库里出现数据 → Web 看板数值变化 → UE5 对应构件颜色变化 → 若越限则告警产生</li>
+      <li>记录全过程的端到端时间</li>
+    </ol>
+  </li>
+  <li><b>做 ≥3 轮</b>，每轮都记录延迟；取最大值作为指标值。</li>
+  <li><b>录屏 + 保存时间戳日志</b>，存入 <code>Docs\evidence\W07\</code>。</li>
+  <li><b>把流程写成《全链路验证用例》文档</b>——W12 的第三方测试报告直接从这里改。</li>
+</ol>
+<ul class="check">
+  <li>全链路一次跑通（无手工造假环节）</li>
+  <li>≥3 轮验证，延迟最大值 ≤2 s</li>
+  <li>流程已写成用例文档</li>
+  <li>录屏与日志已归档</li>
+</ul>
+
+<h3>D5（3 h）看板体验与边界处理</h3>
+<ol>
+  <li><b>演示友好性</b>：大屏/投影分辨率适配；字号够大；配色在投影下能看清（深色底 + 高饱和强调色通常更好）。</li>
+  <li><b>边界情况</b>：
+    <ul>
+      <li>无数据时显示「无数据」而不是空白或 0（0 会被误读为真实值）</li>
+      <li>数据中断时显示最后更新时间 + 断开提示</li>
+      <li>超量程数据显示为「超量程」并标注</li>
+    </ul>
+  </li>
+  <li><b>数据来源标识</b>：按你原型的做法，<b>界面上固定显示「演示数据 / 真实数据」标识</b>——这是诚实也是保护自己。</li>
+</ol>
+<ul class="check">
+  <li>投影下可读</li>
+  <li>无数据/断线/超量程都有明确提示</li>
+  <li>数据来源标识可见</li>
+</ul>
+
+<h3>D6（3 h）第 2 次全表普查（砍补决策点）</h3>
+<div class="note warn"><span class="t">W8 末是「砍/补决策点」</span>
+  只剩 4 周时，必须明确哪些条款有风险、要不要降级。<b>今天的普查就是为了这个决策。</b></div>
+<ol>
+  <li>逐条过 27 条，标记：<b>已达标 / 部分 / 未开始 / 有风险</b>。</li>
+  <li>本周结束时，<b>第 6、11、12、13、14、17、18、19、20、21 条</b>应基本达标。</li>
+  <li>还没动的条款应该只剩：<b>第 9、10 条（轻量化）、第 15 条（回放导出，W8 做）、第 22–27 条（系统设置/RBAC/日志，W11 做）</b>。</li>
+  <li><b>把清单发给项目负责人</b>，明确告之哪些按期、哪些需要降级或调整——<b>提前沟通永远好过验收时解释</b>。</li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>看板 7 类指标</td><td>全有数据与图表；刷新周期可配</td><td><b>第 11、12、13 条（▲11 硬指标）</b></td></tr>
+    <tr><td>理论/实测同轴对比</td><td>同轴 + 三项误差统计</td><td><b>第 14 条</b></td></tr>
+    <tr><td>三维着色联动</td><td>Web ↔ UE5 双向</td><td><b>第 13 条</b></td></tr>
+    <tr><td>全链路验证</td><td>≥3 轮，端到端延迟最大值 ≤2 s，有录屏与日志</td><td><b>第 6 条（硬指标）</b></td></tr>
+    <tr><td>验证用例文档</td><td>可复现、可交付第三方</td><td>第三方测试报告基础</td></tr>
+  </tbody>
+</table>
+
+<div class="note good">
+  <span class="t">里程碑判定</span>
+  ≥30 测点绑定 ✅　端到端延迟 ≤2 s ✅　告警触发 ≤3 s ✅　看板 7 类指标 ✅　三维联动 ✅
+  ＝ <b>数据联动闭环达成</b>，可以进入回放与推演阶段。
+</div>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① 理论值来源若一时拿不到，<b>先用设计公式估算并在界面标注「理论值为估算值」</b>，同时立刻去要正式数据——不要卡住　
+  ② 双向联动若只做成单向，<b>先保「Web → UE5 定位」</b>（演示更常用），反向留到 W11　
+  ③ 7 类指标里若某类设备尚未通电，<b>用仿真顶上并明确标记</b>，不要空着　
+  ④ 不要在 W7 做历史回放（W8 的事）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="08_W8_回放与推演.html">进入第 8 周：回放与推演</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
