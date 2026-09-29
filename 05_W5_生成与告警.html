@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 5 周 · 生成与告警 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a href="03_W3_数据接入与后台.html">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a class="cur" href="#">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 05 ／ 12</div>
+  <h1>生成与告警：让构件随数据变色、随异常闪烁</h1>
+  <p class="goal"><b>本周目标</b>：用动态材质实例（MID）驱动「正常 / 预警 / 报警 / 紧急」四档阈值着色与闪烁；把告警的三级阈值与状态流转做出来，并实现「告警 ↔ 三维构件位置」双向关联。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>40 : 60</b></span>
+    <span>对应条款 <b>第 6、20 条（数据联动着色、告警管理）</b></span>
+    <span>硬指标 <b>端到端延迟 ≤2 s；告警触发 ≤3 s</b></span>
+  </div>
+</div>
+
+<div class="note info">
+  <span class="t">本周的知识衔接</span>
+  你在 W4 做剖切时，可能已经提前摸到了「动态材质实例」——如果没有，本周正式学。
+  <b>剖切、着色、闪烁三件事用的是同一套机制</b>（材质参数），学一次用三次，这是本路线里性价比最高的一处复用。
+</div>
+
+<details class="acc" id="w5-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>核心：动态材质实例（MID）——本周唯一的新技术</h4>
+
+    <div class="res">
+      <span class="title">虚幻引擎中的实例化材质</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学（本周最重要）</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/instanced-materials-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周看</b>：这是本周全部工作的地基。官方这页正好讲了你需要的每一件事：<br>
+        ① 区分<b>常量材质实例（MIC）</b>与<b>动态材质实例（MID）</b>——只有 MID 能在<b>运行时</b>改参数；<br>
+        ② 蓝图路径：<code>Create Dynamic Material Instance</code> 节点 → 再用 <b>Set Material</b> 应用到构件；<br>
+        ③ 参数类型：标量（Scalar）、向量（Vector，<b>常用于可配置颜色</b>）、纹理、静态参数；<br>
+        ④ <b>最容易踩的坑（务必记住）</b>：参数必须先在<b>父材质</b>里参数化，否则实例里根本看不到；<b>静态参数在编译时生效、运行时改不了</b>——用错参数类型是「颜色改不动」的第一原因。<br>
+        官方举例甚至就包含了「改变架构可视化中的漆色」，与你的场景高度对应。
+      </div>
+    </div>
+
+    <h4>告警与看板：Web 侧本周同步推进</h4>
+
+    <div class="res">
+      <span class="title">UMG UI 设计器快速入门（复用于告警面板与牌卡）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">复用</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/umg-ui-designer-quick-start-guide-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么再用一次</b>：告警列表、实时数值面板、四档图例都是 UMG。你在 W2/W4 已经学过控件与绑定，本周只是换内容——<b>不需要再看新教程</b>。</div>
+    </div>
+
+    <div class="res">
+      <span class="title">Actor 通信（复用于「告警 → 三维定位」）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-opt">选学</span></div>
+      <a href="https://dev.epicgames.com/documentation/zh-cn/unreal-engine/actor-communication-in-unreal-engine">→ 打开（中文）</a>
+      <div class="why"><b>为什么这周看</b>：合同要求「点击告警可定位至对应构件」。这条链路的本质是「UI 发出事件 → 相机与高亮响应」，属 Actor 通信。你在 W2 做的「定位按钮」本周升级成「点告警定位」。</div>
+    </div>
+
+    <div class="res warnres">
+      <span class="title">Web 侧看板：直接用你现有原型的能力</span>
+      <div class="meta"><span class="badge b-must">必读</span><span class="badge b-tool">本地文件</span></div>
+      <div class="why">
+        <b>为什么这周读</b>：你现有原型的 README 里已经写明它实现了「四档阈值着色」「7 类指标看板」「三级阈值告警、触发延迟统计、状态流转（未确认→已确认→已恢复）、一键三维定位」。<br>
+        <b>本周的正确做法不是重写，而是</b>：把它现有的告警模块与 UE5 的着色打通（同一份阈值配置、同一个主题）。
+        <b>阈值配置只维护一份</b>——放 Web 侧数据库，UE5 订阅。否则两边阈值不一致，验收时会自相矛盾。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">ECharts 官方中文手册（告警统计图表）</span>
+      <div class="meta"><span class="badge b-official">ECharts 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学（Web 侧）</span></div>
+      <a href="https://echarts.apache.org/handbook/zh/get-started/">→ 打开（中文使用手册）</a>　
+      <a href="https://echarts.apache.org/zh/tutorial.html">→ 教程总入口</a>
+      <div class="why">
+        <b>为什么这周看</b>：合同第 11、14 条要求「理论值/实测值同轴对比曲线」「绝对误差、相对误差、相关系数」，第 19 条要求「超限次数、超限时长统计」——这些都是 ECharts 的常规能力，中文文档质量很高。<br>
+        <b>⚠️ 版本提醒</b>：ECharts 官方已出现 <b>v6 升级指南</b>。如果你的原型是 v5，升级前先读那篇，否则图表配置可能报错。
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>UE5 动态材质实例 教程</code>　<code>UE5 蓝图 改材质颜色</code>　<code>Create Dynamic Material Instance 用法</code>　
+      <code>UE5 材质参数 标量 向量 区别</code>　<code>UE5 自发光 闪烁 材质</code>　<code>UE5 告警 闪烁 提示</code><br>
+      <b>筛资料提醒</b>：动态材质实例的教程<b>必须</b>能对上 UE5 界面（老 UE4 教程的节点名与位置已有变化）；若教程里没提「参数化父材质」这个前提，直接跳过。
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（3–4 h）四档阈值着色（先用手动数据验证逻辑）</h3>
+<div class="note info"><span class="t">为什么先用手动数据</span>
+  着色逻辑本身与数据来源无关。<b>先用变量手工调值，把「改一个数就变色」验证掉</b>，再接真数据——避免逻辑问题和数据问题纠缠。</div>
+<ol>
+  <li><b>做父材质</b>：给构件材质加一个<b>向量参数</b>（如 <code>BaseColor</code>）与一个<b>标量参数</b>（如 <code>Emissive</code> 用于闪烁），<b>必须先在父材质里参数化</b>。</li>
+  <li><b>做四档配色</b>：正常（绿/灰）、预警（黄）、报警（橙）、紧急（红）。写一个函数：输入测点值 + 三级阈值 → 输出档位 → 设置颜色参数。</li>
+  <li><b>做闪烁</b>：用时间轴或 Timer 让自发光参数在报警/紧急档位下往复变化；<b>预警档不闪烁</b>（避免满屏闪，演示时反而看不清重点）。</li>
+  <li><b>性能注意</b>：5000+ 构件不要每帧都给所有构件创建 MID。<b>只给「可见且需要着色」的构件创建并缓存</b>，其余保持原材质。</li>
+</ol>
+<ul class="check">
+  <li>手工改变量，构件颜色能按四档变化</li>
+  <li>报警/紧急档会闪烁，预警档不闪</li>
+  <li>帧率没有明显下降（<code>stat unit</code> 对比 D1 前后）</li>
+</ul>
+
+<h3>D2（3–4 h）按分区取「最不利测点」驱动构件着色</h3>
+<ol>
+  <li><b>明确映射规则</b>：一个构件可能关联多个测点（例如一个节段贴多片应变片）。规则建议：
+    <ul>
+      <li><b>单个测点</b> → 直接取该测点档位</li>
+      <li><b>多个测点</b> → 取<b>最不利</b>（档位最高的那个）</li>
+      <li><b>无测点构件</b> → 用所属分区的档位或保持默认色</li>
+    </ul>
+    <b>把规则写进文档</b>——验收时甲方一定会问「这个颜色是根据什么来的」。
+  </li>
+  <li><b>实现映射</b>：用 W2 的测点表（含「所属构件编号」）建一张「构件 → 测点列表」的表；每帧或每 N 秒重算一次档位。</li>
+  <li><b>加图例</b>：界面上固定显示四档色卡与含义（正常/预警/报警/紧急），并标明当前用的是哪个测点。</li>
+</ol>
+<ul class="check">
+  <li>构件颜色由「其所属测点中最不利的那个」决定</li>
+  <li>映射规则已成文</li>
+  <li>界面有四档图例</li>
+</ul>
+
+<h3>D3（3–4 h）告警三级 + 状态流转 + 通知</h3>
+<ol>
+  <li><b>告警分级</b>：按测点、按指标自定义阈值，<b>≥3 级（预警/报警/紧急）</b>。阈值配置<b>只维护一份</b>（放 Web 侧库表，UE5 订阅）。</li>
+  <li><b>状态流转</b>：未确认 → 已确认 → 已恢复。加操作按钮与操作人记录（对应第 27 条日志审计）。</li>
+  <li><b>触发延迟测量</b>：从「数据到达」到「告警产生」打时间戳，<b>合同要求 ≤3 s</b>。把日志存下来（这是第三方测试报告会要的证据）。</li>
+  <li><b>通知 ≥1 种</b>：声光最简单（界面提示音 + 红色闪烁横幅），邮件/短信需要服务，建议先用声光 + 邮件。</li>
+</ol>
+<ul class="check">
+  <li>三级阈值可配置且生效</li>
+  <li>状态可流转，有操作记录</li>
+  <li>触发延迟有实测数值且 <b>≤3 s</b></li>
+  <li>至少一种通知方式可用</li>
+</ul>
+
+<h3>D4（3–4 h）告警 ↔ 三维位置关联 + 点击定位</h3>
+<ol>
+  <li><b>告警带构件信息</b>：每条告警必须记录「构件编号」，这是「位置关联」的前提。</li>
+  <li><b>点击定位</b>：点告警条目 → 相机平滑飞到对应构件 + 该构件高亮 + 属性面板弹出（复用 W2 的「定位按钮」与 W4 的 <code>Set View Target with Blend</code>）。</li>
+  <li><b>反向定位</b>：点三维里的构件 → 告警列表滚动到相关条目。双向都能用，验收演示才顺。</li>
+  <li>录一段完整的「告警触发 → 点击 → 飞到构件」的演示视频。</li>
+</ol>
+<ul class="check">
+  <li>告警记录含构件编号</li>
+  <li>点告警能飞到构件并高亮</li>
+  <li>点构件能定位到告警条目</li>
+  <li>演示视频已存证</li>
+</ul>
+
+<h3>D5（3–4 h）端到端延迟 ≤2 s：把证据链做出来</h3>
+<div class="note danger"><span class="t">这是合同硬指标，且第三方测试报告一定会查</span>
+  「实测数据从采集到模型显示的<b>端到端延迟 ≤2 秒</b>」——注意是<b>端到端</b>，从采集箱出数据算起，到 UE5 画面变色为止。</div>
+<ol>
+  <li><b>在链路的四个点打时间戳</b>：
+    <ol>
+      <li>采集箱发出（设备侧时间或报文里的 <code>ts</code> 字段）</li>
+      <li>Broker 收到（EMQX 日志/Dashboard）</li>
+      <li>数据库写入（库表时间戳）</li>
+      <li>UE5 着色生效（蓝图里打日志 + 屏幕上的时间显示）</li>
+    </ol>
+  </li>
+  <li><b>实测并记录</b>：做 20 次以上采样，算<b>最大值</b>（验收看的是最坏情况，不是平均值）。</li>
+  <li><b>若超标</b>，按以下顺序排查：默认刷新周期是否 ≤5 s（合同要求 1–60 s 可配、默认 ≤5 s）→ Broker 与库的往返 → UE5 侧是否在做耗时计算 → 网络。</li>
+  <li><b>归档</b>：把带时间戳的日志存入 <code>Docs\evidence\W05\延迟实测日志\</code>。</li>
+</ol>
+<ul class="check">
+  <li>四个环节都有时间戳记录</li>
+  <li>≥20 次采样的<b>最大值 ≤2 s</b></li>
+  <li>日志已归档，可复现</li>
+</ul>
+
+<h3>D6（3 h）Web 侧对接 + 本周收尾</h3>
+<ol>
+  <li><b>统一阈值来源</b>：确认 Web 与 UE5 读的是同一份阈值配置（改一处两边都变）。这是最容易出岔子的地方，<b>本周必须验证一次</b>。</li>
+  <li>Web 侧补齐告警列表、状态流转、通知设置界面；ECharts 出告警统计图（超限次数、超限时长）。</li>
+  <li>更新验收自测表：<b>第 6、20 条</b>应基本达标；第 11、16 条标注进度。</li>
+  <li>整理证据包，写 devlog。</li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>四档阈值着色</td><td>正常/预警/报警/紧急 + 闪烁提示</td><td><b>第 6 条（硬指标）</b></td></tr>
+    <tr><td>最不利测点映射</td><td>规则成文，可解释</td><td>第 6 条</td></tr>
+    <tr><td>告警三级 + 状态流转</td><td>可配置、可操作、有记录</td><td><b>第 20 条</b></td></tr>
+    <tr><td>告警三维关联与定位</td><td>双向定位可用</td><td><b>第 20 条</b></td></tr>
+    <tr><td>延迟证据链</td><td><b>端到端 ≤2 s（最坏情况）</b>；告警 ≤3 s</td><td><b>第 6、20 条（硬指标）</b></td></tr>
+    <tr><td>阈值单一来源</td><td>Web 与 UE5 一致</td><td>第 16、20 条</td></tr>
+  </tbody>
+</table>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① 颜色改不动时，<b>先查父材质有没有参数化、参数是不是静态参数</b>（90% 的问题在这两处）　
+  ② 闪烁若影响帧率或演示观感，<b>降级为「仅紧急档闪烁 + 其他档变色」</b>，不要为闪烁牺牲帧率　
+  ③ 延迟若一时压不到 2 s，<b>先如实记录实测值</b>并继续推进，把优化留到 W11——不要在本周为这 0.5 s 停摆　
+  ④ 不要本周做历史回放（W8 的事）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="06_W6_存储与分析.html">进入第 6 周：存储与分析</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
