@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 3 周 · 数据接入与后台 · 拱桥智能监测平台 UE5 12 周路线</title>
+<style>
+/* ==========================================================================
+   拱桥智能监测平台 · UE5 12 周开发学习路线
+   离线可用的单一样式表（无外部字体/CDN 依赖）
+   ========================================================================== */
+
+:root{
+  --bg:#0e1420;
+  --bg-soft:#141d2c;
+  --card:#18222f;
+  --card-2:#1d2937;
+  --line:#28374a;
+  --line-soft:#1f2c3c;
+  --tx:#e6edf5;
+  --tx-2:#a9b8c9;
+  --tx-3:#7387a0;
+  --accent:#4ea1ff;
+  --accent-dim:#1d4a7a;
+  --ok:#3ecf8e;
+  --warn:#f2b03d;
+  --bad:#ff6b6b;
+  --done:#8b9bb4;
+  --purple:#a78bfa;
+  --radius:12px;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:Consolas,"Cascadia Mono",Menlo,monospace;
+  font-size:.88em;
+  background:#0a0f18;
+  border:1px solid var(--line-soft);
+  border-radius:5px;
+  padding:1px 6px;
+  color:#9dd0ff;
+  word-break:break-all;
+}
+pre{
+  background:#0a0f18;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.86em;
+  line-height:1.65;
+}
+pre code{background:none;border:none;padding:0;color:#c4d8ef}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+header.site{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111a28,#0e1420);
+  padding:26px 0 22px;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(8px);
+}
+header.site .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header.site h1{font-size:1.24rem;margin:0;letter-spacing:.3px}
+header.site .sub{color:var(--tx-3);font-size:.82rem;margin-top:3px}
+header.site .spacer{flex:1}
+main{padding:30px 0 90px}
+footer.site{
+  border-top:1px solid var(--line);
+  color:var(--tx-3);
+  font-size:.8rem;
+  padding:22px 0 40px;
+  margin-top:40px;
+}
+
+/* ---------- 通用元件 ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 18px;
+}
+.card > h2:first-child, .card > h3:first-child{margin-top:0}
+h2{font-size:1.16rem;margin:32px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:24px 0 10px;color:#cfe0f2}
+h4{font-size:.94rem;margin:18px 0 8px;color:var(--tx-2)}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+hr{border:none;border-top:1px solid var(--line-soft);margin:26px 0}
+.muted{color:var(--tx-3)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* 表格 */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:.88rem;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+th{background:#101a27;color:#cfe0f2;font-weight:600;white-space:nowrap}
+tbody tr:nth-child(even){background:#151f2c}
+td.wrap-ok{white-space:normal}
+
+/* 徽章 */
+.badge{
+  display:inline-block;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:1px 8px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  margin:0 4px 3px 0;
+  vertical-align:middle;
+  font-weight:500;
+}
+.b-official{color:#7fd1ff;border-color:#2b5f85;background:#12273a}
+.b-video{color:#ffb4d1;border-color:#7a3554;background:#2c1622}
+.b-must{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-opt{color:#9fb4cc;border-color:#3a4a5e;background:#1a2431}
+.b-skip{color:#8b9bb4;border-color:#3a4657;background:#171f29}
+.b-ok{color:#8ff0c4;border-color:#2b7a56;background:#102a20}
+.b-warn{color:#ffd48a;border-color:#7d5a1c;background:#2e2310}
+.b-bad{color:#ff9d9d;border-color:#7d2b2b;background:#2c1414}
+.b-zh{color:#9ff0d0;border-color:#2e6b55;background:#10241d}
+.b-en{color:#ffc9a3;border-color:#7a4a22;background:#2c1d10}
+.b-tool{color:#c9b6ff;border-color:#4c3b7a;background:#1d1730}
+
+/* 折叠区（<details>） */
+details.acc{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card-2);
+  margin:14px 0;
+  overflow:hidden;
+}
+details.acc > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 16px;
+  font-weight:600;
+  color:#d5e5f7;
+  background:#16202e;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  user-select:none;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary::before{
+  content:"▸";
+  color:var(--accent);
+  transition:transform .16s ease;
+  display:inline-block;
+}
+details.acc[open] > summary::before{transform:rotate(90deg)}
+details.acc[open] > summary{border-bottom:1px solid var(--line)}
+details.acc .body{padding:14px 18px 18px}
+details.acc > summary .cnt{
+  margin-left:auto;
+  font-weight:400;
+  font-size:.76rem;
+  color:var(--tx-3);
+}
+
+/* 资料条目 */
+.res{
+  border-left:3px solid var(--accent-dim);
+  background:#131c28;
+  border-radius:0 8px 8px 0;
+  padding:11px 14px;
+  margin:11px 0;
+}
+.res.warnres{border-left-color:#7d5a1c}
+.res.badres{border-left-color:#7d2b2b;opacity:.92}
+.res .title{font-weight:600;color:#dbe9f8;display:block;margin-bottom:3px}
+.res .meta{font-size:.8rem;color:var(--tx-3);margin:4px 0 2px}
+.res .why{font-size:.85rem;color:var(--tx-2);margin-top:5px}
+.res a{word-break:break-all;font-size:.85rem}
+
+/* 提示块 */
+.note{
+  border-radius:10px;
+  padding:13px 16px;
+  margin:14px 0;
+  border:1px solid;
+  font-size:.9rem;
+}
+.note.info{background:#122032;border-color:#274a6e}
+.note.warn{background:#2a2110;border-color:#6d5219}
+.note.danger{background:#2a1414;border-color:#6d2626}
+.note.good{background:#10241d;border-color:#276048}
+.note .t{font-weight:700;display:block;margin-bottom:4px}
+.note.info .t{color:#7fd1ff}
+.note.warn .t{color:#ffd48a}
+.note.danger .t{color:#ff9d9d}
+.note.good .t{color:#8ff0c4}
+
+/* 检查点清单 */
+ul.check{list-style:none;padding-left:0}
+ul.check li{padding-left:28px;position:relative;margin:7px 0}
+ul.check li::before{
+  content:"☐";
+  position:absolute;left:4px;top:0;
+  color:var(--accent);font-size:1.05em;
+}
+
+/* 周卡片网格（首页） */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+a.wcard{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px 17px;
+  color:inherit;
+  text-decoration:none;
+  transition:border-color .15s,transform .15s,background .15s;
+}
+a.wcard:hover{
+  border-color:var(--accent);
+  background:var(--card-2);
+  transform:translateY(-2px);
+  text-decoration:none;
+}
+a.wcard .wn{
+  font-size:.74rem;
+  color:var(--accent);
+  letter-spacing:1.2px;
+  font-weight:700;
+}
+a.wcard .wt{
+  font-size:1rem;
+  font-weight:600;
+  margin:5px 0 7px;
+  color:#e6edf5;
+}
+a.wcard .wd{font-size:.83rem;color:var(--tx-2);line-height:1.6}
+a.wcard .wm{
+  font-size:.75rem;
+  color:var(--tx-3);
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed var(--line);
+}
+
+/* 周导航 */
+.weeknav{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:0 0 20px;
+}
+.weeknav a{
+  font-size:.82rem;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 12px;
+  color:var(--tx-2);
+  background:var(--card);
+}
+.weeknav a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.weeknav a.cur{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:700}
+.weeknav a.dis{opacity:.34;pointer-events:none}
+
+/* 周页头 */
+.whead{
+  background:linear-gradient(135deg,#152234,#111a26);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin:0 0 20px;
+}
+.whead .wn{font-size:.76rem;color:var(--accent);letter-spacing:1.6px;font-weight:700}
+.whead h1{font-size:1.5rem;margin:6px 0 10px}
+.whead .goal{color:#cfe0f2}
+.whead .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:13px;font-size:.82rem;color:var(--tx-3)}
+.whead .facts b{color:var(--tx-2);font-weight:600}
+
+/* 打印 */
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  header.site{position:static;background:#fff;border-bottom:2px solid #000}
+  header.site .sub,footer.site{color:#444}
+  .card,.whead,details.acc{background:#fff;border-color:#bbb;break-inside:avoid}
+  details.acc{border:1px solid #bbb}
+  details.acc > summary{background:#f2f2f2;color:#000}
+  details.acc .body{padding:10px 14px}
+  details.acc > summary::before{color:#000}
+  pre,code{background:#f6f6f6;color:#000;border-color:#ccc}
+  a{color:#000;text-decoration:underline}
+  th{background:#eee;color:#000}
+  tbody tr:nth-child(even){background:#fafafa}
+  .note{background:#f6f6f6;border-color:#bbb}
+  .badge{border-color:#888}
+  a.wcard:hover{transform:none}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  header.site h1{font-size:1.06rem}
+  .wrap{padding:0 14px}
+  .card{padding:16px}
+  th,td{padding:6px 8px;font-size:.82rem}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div>
+      <h1>拱桥智能建造及智能监测综合实验平台</h1>
+      <div class="sub">标的 ④ 智能化监测分析与展示平台 · UE5 + 像素流 · 12 周单兵开发学习路线</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub">履约周期 12 周 ｜ 交付节点：方案 → 开发 → 验收</div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="weeknav">
+<a href="index.html">总览</a>
+<a href="01_W1_环境与管线.html">W1</a>
+<a href="02_W2_构件分类与属性.html">W2</a>
+<a class="cur" href="#">W3</a>
+<a href="04_W4_空间交互与性能.html">W4</a>
+<a href="05_W5_生成与告警.html">W5</a>
+<a href="06_W6_存储与分析.html">W6</a>
+<a href="07_W7_联动闭环.html">W7</a>
+<a href="08_W8_回放与推演.html">W8</a>
+<a href="09_W9_像素流贯通.html">W9</a>
+<a href="10_W10_Web 融合.html">W10</a>
+<a href="11_W11_性能与交付.html">W11</a>
+<a href="12_W12_验收准备.html">W12</a>
+<a href="14_资料索引.html">资料</a>
+</nav>
+</div>
+
+<main>
+  <div class="wrap">
+<div class="whead">
+  <div class="wn">WEEK 03 ／ 12</div>
+  <h1>数据接入与后台：让真数据第一次走进系统</h1>
+  <p class="goal"><b>本周目标</b>：把「采集箱 → Broker → 库 → UE5」这条路打通<b>至少一条通道</b>。同时启动 Web 后台（升级你现有 Three.js 原型），让真数据在库里落下来。</p>
+  <div class="facts">
+    <span>建议工时 <b>22–26 h</b></span>
+    <span>学习 : 实做 ≈ <b>45 : 55</b></span>
+    <span>对应条款 <b>第 16、17、21 条（数据管理、协议接入、存储）</b></span>
+    <span>风险等级 <b><span class="badge b-bad">本周最大不确定性</span></b></span>
+  </div>
+</div>
+
+<div class="note danger">
+  <span class="t">本周为什么是最大风险周</span>
+  前面两周的坑都是「自己可控」的（装引擎、导模型）。本周的坑在<b>设备侧</b>：采集箱到底吐什么、点位表在哪、寄存器地址是什么、
+  主题怎么命名——<b>只要一样卡住，整周就空转</b>。所以本周的策略是：<b>先打通一条最简单的通道</b>，不要一上来就接 130 个测点。
+</div>
+
+<div class="note good">
+  <span class="t">两个已核实的结论，能让你少走弯路</span>
+  <b>① MQTT 是引擎自带的</b>——不需要买插件、不需要写 C++。
+  <b>② JSON 也是引擎自带的</b>——<code>JsonBlueprintUtilities</code> 提供纯蓝图节点，<b>不需要 VaRest</b>。
+  这两条把本周的「要采购/要编程」风险直接归零，剩下的纯粹是「对接」问题。
+</div>
+
+<details class="acc" id="w3-res" open>
+  <summary>📚 本周学习资料（点开／收起）</summary>
+  <div class="body">
+
+    <h4>UE 侧：把数据读进来（本周技术主线）</h4>
+
+    <div class="res">
+      <span class="title">MQTT 插件（引擎内置）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-must">必学（本周核心）</span><span class="badge b-tool">零成本</span></div>
+      <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/API/PluginIndex/MQTT">→ 打开（插件索引页）</a>
+      <div class="why">
+        <b>为什么这周看</b>：这是你接真数据的<b>官方免费通道</b>。已核实要点：<br>
+        ① 插件位置 <code>Engine\Plugins\Protocols\MQTT\MQTT.uplugin</code>，编辑器里在 <b>IOT</b> 分类下，标 <b>Experimental</b>；<br>
+        ② 核心类 <code>UMQTTClientObject</code>（蓝图显示名可能是「MQTT Client」），提供 Connect / Disconnect / Subscribe / Publish / Unsubscribe，
+        并带 <code>OnConnect</code> / <code>OnMessage</code> / <code>OnPublish</code> 委托；<br>
+        ③ 连接 URL 形如 <code>Mqtt://user:pass@host:1883</code>，走 <b>TCP 1883 / 8883</b>（不是 WebSocket）；<br>
+        ④ 它<b>依赖 Json Blueprint Utilities</b>（所以两者天生配套）。<br>
+        <b>⚠️ 诚实提醒</b>：该插件索引页<b>没有</b>蓝图节点清单，具体节点要从 <code>API/Plugins/MQTTCore</code> 下逐个查。这意味着你需要一点探索时间，
+        但已有开发者用它做出完整项目，路径是通的。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">JsonBlueprintUtilities（蓝图 JSON 库）</span>
+      <div class="meta"><span class="badge b-official">Epic 官方</span><span class="badge b-ok">已实测·可访问</span><span class="badge b-must">必学</span><span class="badge b-tool">零成本</span></div>
+      <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/JsonBlueprintUtilities/UJsonBlueprintFunctionLibrary">→ 打开（API 页）</a>
+      <div class="why">
+        <b>为什么这周看</b>：MQTT 收到的消息是 JSON 字符串，要靠它转成结构体。已核实的节点名（可直接在蓝图里搜）：
+        <code>Load Json from String</code>、<code>Load Json from File</code>、<code>Save Json to File</code>、<code>Get Json String</code>、
+        <code>Get Field</code>、<code>Set Field</code>、<code>Has Field</code>、<code>Get Field Names</code>、<code>Convert Struct To Json String</code>。<br>
+        <b>推荐链路</b>：MQTT OnMessage → <code>Load Json from String</code> → <code>Get Field</code>（输出直接挂到结构体）→ 驱动 W5 的着色。<br>
+        <b>⚠️ 需你自己验收的一点</b>：<code>Get Field</code> 对「多层嵌套数组 → 结构体」的自动化程度，本文档无法替你确认。
+        <b>建议第 1 天就花半天做个小实验验证</b>；若确实吃力，再考虑 VaRest 兜底（但先别买）。
+      </div>
+    </div>
+
+    <div class="res warnres">
+      <span class="title">HTTP 请求（蓝图）—— 本周作为兜底通道</span>
+      <div class="meta"><span class="badge b-warn">未验证</span><span class="badge b-opt">兜底用</span></div>
+      <div class="why">
+        <b>为什么放这</b>：如果 MQTT 插件在你的 EMQX 配置下出问题，可用 HTTP 轮询顶上（配合 Timer）。
+        <b>但本文档未能找到并验证一个名为「HttpBlueprint」的官方页面</b>——请不要按这个名字去引用或写进方案。
+        蓝图里搜 <code>Http</code> 看实际有哪些节点，以你引擎里实际存在的为准。<br>
+        <b>关键限制（已核实）</b>：<b>UE 没有蓝图可用的内置 WebSocket</b>（<code>IWebSocket</code> 仅 C++）。
+        所以「实时」只能靠 <b>MQTT</b>；HTTP 轮询只适合 1–5 s 级刷新，<b>不要用它去做「端到端延迟 ≤2 s」的验收通道</b>。
+      </div>
+    </div>
+
+    <h4>Web 侧：数据落库与后台启动</h4>
+
+    <div class="res">
+      <span class="title">EMQX 官方文档（MQTT Broker）</span>
+      <div class="meta"><span class="badge b-official">EMQX 官方</span><span class="badge b-ok">已实测·中文正文</span><span class="badge b-must">必学</span></div>
+      <a href="https://docs.emqx.com/zh/emqx/latest/">→ 打开（中文）</a>
+      <div class="why">
+        <b>为什么这周看</b>：Broker 是整个数据链路的枢纽，UE5 与 Web 两边都订阅它。中文文档质量高，含 MQTT 核心概念、客户端工具演示（发布/订阅）、
+        保留消息、共享订阅、通配符订阅、Dashboard 使用、Docker 与 Linux 安装、规则引擎与数据集成。<br>
+        <b>⚠️ 一个选型级提醒（务必注意）</b>：该文档的默认入口是 <b>EMQX 企业版</b>，而 EMQX 5.x 企业版采用 <b>BSL 1.1 商业源码许可</b>，
+        页面写的是「免费试用」而非开源。<b>如果项目要求纯开源组件，这一点必须在选型阶段确认</b>，不要默认「EMQX 就是免费开源的」。
+      </div>
+    </div>
+
+    <div class="res">
+      <span class="title">你现有的 Web 原型（最重要的存量资产）</span>
+      <div class="meta"><span class="badge b-must">必读</span><span class="badge b-tool">本地文件</span></div>
+      <div class="why">
+        <b>为什么这周读</b>：<code>01_xidagongqiao_demo\系统demo\</code> 里的 Three.js + ECharts 原型已实现 130 测点、5 类构件、
+        四档阈值着色、7 类指标看板、RBAC 骨架、深链接与 <code>window.__demo</code> 钩子——<b>它就是 Web 后台的底座</b>。<br>
+        <b>建议读法</b>：先看 <code>README.md</code>（尤其「与方案的对应关系」那张表），再读 <code>js/data.js</code>（仿真数据引擎＝数据层契约）
+        与 <code>js/app.js</code>（事件主控）。<b>先读懂，再动手改。</b><br>
+        <b>顺带一个复用价值</b>：它的仿真引擎可以直接当「真数据不通时的无缝切换备份」——验收当天设备掉链子时能救命。
+      </div>
+    </div>
+
+    <div class="res warnres">
+      <span class="title">时序数据库：TimescaleDB 与 InfluxDB（中文资源现状如实说明）</span>
+      <div class="meta"><span class="badge b-warn">中文文档缺口</span><span class="badge b-opt">选学</span></div>
+      <div class="why">
+        <b>已核实的事实（会影响你选型）</b>：<br>
+        ① <b>TimescaleDB 已改名 Tiger Data</b>，官网文档在 <code>tigerdata.com/docs</code>；访问旧域名 <code>docs.timescale.com/zh/</code> 会跨域重定向。
+        搜「TimescaleDB 中文文档」极易落到旧域名或过时页面。<b>官方目前没有可靠中文版</b>，只能靠中文博客。<br>
+        ② <b>InfluxDB 官方文档也没有中文版</b>，且站点同时并列 <b>v2 与 v3（Core/Enterprise/Clustered/Cloud）</b>多条产品线，
+        选型时很容易被搜索结果混到不同版本。<br>
+        <b>建议</b>：这两个不要指望「官方中文文档」，直接用<b>英文官方文档 + AI 助手翻译</b>（这是你英语短板最值得用 AI 的地方），
+        或选你更熟的关系型数据库（PostgreSQL）先用起来，时序库放到 W6 再定。
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="t">B站 / 搜索引擎关键词</span>
+      <code>UE5 MQTT 插件 教程</code>　<code>虚幻引擎 MQTTClientObject 蓝图</code>　<code>UE5 VaRest JSON 教程</code>　
+      <code>EMQX 入门 教程</code>　<code>MQTT 主题设计 最佳实践</code>　<code>Modbus TCP 教程 中文</code>　
+      <code>Modbus RTU 寄存器 功能码 详解</code>　<code>TimescaleDB 入门</code>　<code>InfluxDB 入门 中文</code>
+    </div>
+
+  </div>
+</details>
+
+<h2>逐日任务（D1–D6）</h2>
+
+<h3>D1（3–4 h）先摸清设备，再写代码</h3>
+<div class="note danger"><span class="t">顺序不能反</span>
+  很多人这周先埋头学 MQTT，学到一半发现设备根本不给数据。<b>先验证数据源存在，再学怎么接。</b></div>
+<ol>
+  <li><b>拿到设备的三个关键文档</b>（找第 3 项负责人/设备厂商）：
+    <ul>
+      <li><b>点位表</b>：每个测点的编码、类型、单位、量程、寄存器地址或主题名</li>
+      <li><b>协议说明</b>：Modbus TCP 还是 MQTT？端口？是否主动推送？推送频率？</li>
+      <li><b>数据格式样例</b>：要一段真实的报文样本（JSON 或寄存器值），这比任何文档都有用</li>
+    </ul>
+  </li>
+  <li><b>用工具先看到数据</b>（不写一行代码）：
+    <ul>
+      <li>MQTT 路线 → 用 <b>MQTTX</b> 或 <b>EMQX Dashboard 的 WebSocket 客户端</b>订阅，看能不能收到报文</li>
+      <li>Modbus TCP 路线 → 用 <b>Modbus Poll</b>（试用）或 <b>QModMaster</b>（开源）读寄存器</li>
+    </ul>
+  </li>
+  <li><b>把测点表落成 CSV</b>：至少先落 <b>30 个测点</b>（合同要求 ≥30 个绑定），字段建议：
+<pre><code>测点编码 / 测点名称 / 指标类型 / 单位 / 量程下限 / 量程上限
+预警阈值 / 报警阈值 / 紧急阈值 / 所属构件编号 / 分区</code></pre>
+    产物：<code>D:\UE\Docs\测点表.csv</code>（这份表后面 UE5 与 Web 两边都要用）。
+  </li>
+</ol>
+<ul class="check">
+  <li>拿到了点位表 / 协议说明 / 报文样例（或明确知道缺哪一份、找谁要）</li>
+  <li>用工具<b>亲眼看到</b>至少一条真实数据</li>
+  <li><code>测点表.csv</code> 至少 30 行</li>
+</ul>
+
+<h3>D2（3–4 h）Broker 落地 + 数据落库</h3>
+<ol>
+  <li><b>装并跑起 Broker</b>：EMQX（Docker 最快）或 Mosquitto（最轻）。验证：本机用 MQTTX 能发布/订阅。</li>
+  <li><b>设计主题（Topic）结构</b>——这一步现在花 30 分钟，后面省几小时。建议：
+<pre><code>bridge/{桥名}/sensor/{测点编码}/data      ← 数据
+bridge/{桥名}/sensor/{测点编码}/status    ← 在线状态
+bridge/{桥名}/cmd/ue5                     ← Web → UE5 指令（W10 用）
+bridge/{桥名}/state/ue5                   ← UE5 → Web 状态回报（W10 用）</code></pre>
+    <div class="note info" style="margin:8px 0"><span class="t">为什么现在就把 cmd / state 主题定下来</span>
+      W10 要做「Web 里点测点 → UE5 相机飞过去」。如果主题结构到时候再改，两边的订阅全要返工。</div>
+  </li>
+  <li><b>数据落库</b>：先用最简单的方案（PostgreSQL 普通表即可），把报文写进去。<b>时序库选型放到 W6</b>，不要本周纠结。
+    验证：库里能 <code>select</code> 出真实数据行。</li>
+  <li><b>接一个「数据服务」</b>（Node.js，与你现有 demo 技术栈一致）：订阅 MQTT → 写库；同时提供 REST / WebSocket 给前端。</li>
+</ol>
+<ul class="check">
+  <li>Broker 跑起来，能发布/订阅</li>
+  <li>主题结构已定并写进文档</li>
+  <li>数据库里能查到真实数据行</li>
+</ul>
+
+<h3>D3（4 h）UE 侧接通路：用假数据先打通蓝图链路</h3>
+<div class="note warn"><span class="t">为什么要先用假数据</span>
+  设备侧的联调时间不可控。<b>先用假数据把「UE 侧能收到消息并解析」这件事验证掉</b>，
+  等设备通了只需换主题名，避免两边问题纠缠在一起。</div>
+<ol>
+  <li>启用 <b>MQTT</b> 插件（IOT 分类）与 <b>Json Blueprint Utilities</b>，重启编辑器。</li>
+  <li>用 MQTTX 往你设计的主题<b>手工发一条 JSON 报文</b>，例如：
+<pre><code>{"tag":"SG-01-05","type":"strain","value":842.5,"unit":"με","ts":1758700000}</code></pre></li>
+  <li>UE 里用 <code>MQTT Client</code> 节点连接 <code>Mqtt://127.0.0.1:1883</code> → 订阅该主题 → 在 <code>OnMessage</code> 里
+    <code>Load Json from String</code> → <code>Get Field</code> → 取值并 <code>Print String</code>。</li>
+  <li><b>把取到的值存进变量</b>（如 <code>当前测点值</code>）——W2 已经在属性面板留好了这个占位字段，接上就能看到数字跳动。</li>
+</ol>
+<ul class="check">
+  <li>UE 能连上 Broker 并订阅成功</li>
+  <li>收到手工发的报文，能解析出数值并打印</li>
+  <li>属性面板的「实时数据」字段能跳动了</li>
+</ul>
+<div class="note info"><span class="t">卡住时查什么</span>
+  「连不上」→ 先用 MQTTX 在<b>同一台机器</b>验证 Broker 正常，再排查 UE 侧 URL 格式（<code>Mqtt://</code> 大小写、端口、是否要账号密码）　｜　
+  「收到但解析不出」→ 把原始字符串先 <code>Print String</code> 出来看，确认是不是 JSON、有没有 BOM/转义问题　｜　
+  「插件启用后编译报错」→ 检查引擎版本与插件兼容性，重启编辑器</div>
+
+<h3>D4（3–4 h）切到真数据源</h3>
+<ol>
+  <li>把 D3 验证好的蓝图链路的<b>主题名/地址换成设备真实值</b>。</li>
+  <li><b>同时接 Web 侧</b>：数据服务订阅同一主题并落库，前端页面能显示这条真实数据。</li>
+  <li><b>处理两个必然出现的问题</b>：
+    <ul>
+      <li><b>断线重连</b>：网络抖动时不要让系统静默失效——加状态标志 + 界面上显示「连接中/已断开」</li>
+      <li><b>数据异常</b>：真实传感器会有跳变、空值、超量程。本周只需记录原始值，<b>预处理规则放到 W6</b></li>
+    </ul>
+  </li>
+  <li><b>记录第一条真实数据的证据</b>：截图 + 时间戳，存入 <code>Docs\evidence\W03\</code>。</li>
+</ol>
+<ul class="check">
+  <li>真数据从采集箱一路走到 UE5 画面</li>
+  <li>断线时界面有提示，恢复后能自动重连</li>
+  <li>证据已归档</li>
+</ul>
+
+<h3>D5（3–4 h）Web 后台起步：跑通并接管现有原型</h3>
+<ol>
+  <li>把 <code>系统demo</code> 在本地跑起来（<b>必须通过 HTTP 访问</b>，直接双击 <code>index.html</code> 会因 <code>file://</code> 下的 ES Module / fetch 限制加载不了模型）。</li>
+  <li>按 W3 资料区的方法通读 <code>README.md</code> → <code>js/data.js</code> → <code>js/app.js</code>，画出它现有的模块关系图（手画即可）。</li>
+  <li><b>做一个最小改造</b>：把它的仿真数据源替换成 D4 的真实数据接口（先只替换 1 个测点，验证链路）。</li>
+  <li><b>把仿真引擎保留为可切换选项</b>——验收当天的备份方案。</li>
+</ol>
+<ul class="check">
+  <li>原型在本地能正常跑（三维模型能加载）</li>
+  <li>能说出它的数据层/视图层/主控三部分如何交互</li>
+  <li>至少 1 个测点走的是真数据</li>
+</ul>
+
+<h3>D6（3 h）收尾：稳定性 + 证据 + 下周排程</h3>
+<ol>
+  <li>做一次「关掉设备再打开」的测试，确认系统能自愈。把过程录屏。</li>
+  <li>整理证据：真实数据截图、库中数据行、UE 面板跳动的录屏。</li>
+  <li>更新验收自测表：<b>第 17 条（协议接入）</b>可勾选大部分；<b>第 16、21 条</b>标注进度。</li>
+  <li>写 devlog，明确 W4 的第一件事（剖切与测量）。</li>
+</ol>
+
+<h2>本周结束时应有的产出</h2>
+<table>
+  <thead><tr><th>产出</th><th>硬性标准</th><th>对应条款</th></tr></thead>
+  <tbody>
+    <tr><td>数据链路</td><td>采集箱 → Broker → 库 → UE5，<b>至少 1 条真实通道</b></td><td><b>第 17 条</b></td></tr>
+    <tr><td>测点表</td><td>≥30 个测点的编码/类型/阈值/构件对应</td><td>第 16 条</td></tr>
+    <tr><td>主题设计文档</td><td>含 cmd / state 预留主题</td><td>第 17 条（为 W10 铺路）</td></tr>
+    <tr><td>Web 后台起步</td><td>现有原型跑通并接上 1 个真实测点</td><td>第 11–14 条基础</td></tr>
+    <tr><td>仿真兜底</td><td>仿真引擎保留为可切换数据源</td><td>验收应急预案</td></tr>
+  </tbody>
+</table>
+
+<div class="note warn">
+  <span class="t">本周止损规则</span>
+  ① 如果 D1 发现<b>要不到点位表或报文样例</b>，当天立刻上报，同时<b>用仿真数据继续推进</b>——不要停下来等设备　
+  ② MQTT 插件若在半天内无法连通，先用 HTTP 轮询保进度，MQTT 转为并行攻坚　
+  ③ 不要在 W3 纠结时序库选型与预处理算法（W6 的事）　
+  ④ 不要本周就去接 130 个测点（先 1 条通，再批量）
+</div>
+
+<div class="note good">
+  <span class="t">下一步</span> <a href="04_W4_空间交互与性能.html">进入第 4 周：空间交互与性能</a>
+</div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <b>资料可信度说明</b>：本页所有 Epic 官方文档链接均已逐条实测——判据是「能取到真实中文正文」，而非仅看 HTTP 200
+      （Epic 对不存在的路径也会返回 200 空壳页）。凡标注
+      <span class="badge b-ok">已实测</span> 的为本文档生成时逐条访问确认；
+      <span class="badge b-badge b-warn">未验证</span> 的为社区资源，仅核到链接或标题，<b>需你自行打开确认质量</b>。
+    </p>
+    <p>本文件为自包含离线文档（CSS 已内联），可直接双击打开或转发；亦支持浏览器打印 / 导出 PDF。</p>
+  </div>
+</footer>
+
+<script>
+/* 轻量交互：折叠区全展开/收起、打印辅助。无外部依赖。 */
+(function () {
+  'use strict';
+
+  function allDetails() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  }
+
+  // 为每个 details 的 summary 附加条目计数
+  document.addEventListener('DOMContentLoaded', function () {
+    allDetails().forEach(function (d) {
+      var s = d.querySelector('summary');
+      if (!s || s.querySelector('.cnt')) return;
+      var n = d.querySelectorAll('.res').length;
+      if (n > 0) {
+        var span = document.createElement('span');
+        span.className = 'cnt';
+        span.textContent = n + ' 条';
+        s.appendChild(span);
+      }
+    });
+
+    // 记忆展开状态（同一浏览器内）
+    var KEY = 'ue5route-open-v1';
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+    if (saved && typeof saved === 'object') {
+      allDetails().forEach(function (d) {
+        var k = d.id || d.getAttribute('data-k');
+        if (k && saved[k]) d.open = true;
+      });
+    }
+    allDetails().forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var k = d.id || d.getAttribute('data-k');
+        if (!k) return;
+        var cur = {};
+        try { cur = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { cur = {}; }
+        cur[k] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {}
+      });
+    });
+
+    // 键盘：按 Alt+A 全部展开/收起
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+        var ds = allDetails();
+        var anyClosed = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = anyClosed; });
+      }
+    });
+
+    // 外链统一新窗口打开
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function (a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
